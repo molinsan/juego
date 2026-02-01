@@ -3,139 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espía en Jaén - Edición Épica</title>
+    <title>Espía en Jaén - Edición Definitiva</title>
     <style>
-        :root { --p: #2E7D32; --s: #81C784; --dark: #0b1a2a; --gold: #FFD700; --red: #d32f2f; --paper: #f4e4bc; --wood: #5d4037; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; overflow-x: hidden; }
+        :root { --p: #2E7D32; --s: #81C784; --dark: #1a1a1a; --gold: #FFD700; --red: #d32f2f; --paper: #f4e4bc; --wood: #5d4037; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; overflow-x: hidden; }
         
-        /* TRANSICIONES */
+        /* --- TRANSICIONES MEJORADAS --- */
         .screen { 
             display: none; flex: 1; flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px; box-sizing: border-box; min-height: 100vh; 
-            opacity: 0; transform: translateY(30px); transition: all 0.6s ease-in-out;
+            opacity: 0; transform: scale(0.95); transition: all 0.3s ease-out;
         }
-        .screen.active { display: flex; opacity: 1; transform: translateY(0); }
+        .screen.active { display: flex; opacity: 1; transform: scale(1); }
 
-        /* FONDOS */
-        #s1 { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1518107616385-ad308331e9ad?q=80&w=1000') center/cover; }
-        #s-podio-final { background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Catedral_de_Ja%C3%A9n_desde_el_Castillo.jpg/1200px-Catedral_de_Ja%C3%A9n_desde_el_Castillo.jpg') center/cover; }
+        /* --- FONDOS --- */
+        #s1 { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1518107616385-ad308331e9ad?q=80&w=1000') center/cover; }
+        #s-podio-final { background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Catedral_de_Ja%C3%A9n_desde_el_Castillo.jpg/1200px-Catedral_de_Ja%C3%A9n_desde_el_Castillo.jpg') center/cover; }
 
-        .card { background: white; color: #333; padding: 25px; border-radius: 30px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); animation: popIn 0.5s ease; }
-        @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
+        /* --- ELEMENTOS UI --- */
+        .card { background: rgba(255,255,255,0.95); color: #333; padding: 25px; border-radius: 30px; width: 95%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
+        
+        .btn { 
+            background: var(--p); color: white; border: none; padding: 15px 20px; border-radius: 15px; 
+            font-size: 1.1rem; font-weight: bold; width: 90%; max-width: 350px; cursor: pointer; margin: 8px 0; 
+            box-shadow: 0 4px 0 #1b5e20; transition: all 0.1s;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
 
-        .btn { background: var(--p); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; width: 90%; cursor: pointer; margin: 10px 0; transition: transform 0.2s; }
-        .btn:active { transform: scale(0.95); }
-
-        /* WANTED CSS STYLE */
+        /* --- WANTED STYLE CSS PURO (Más realista) --- */
         .wanted-card-css { 
-            background: var(--paper); color: #3d2b1f; padding: 15px; width: 260px; margin: 20px auto; 
-            border: 8px solid var(--wood); outline: 4px solid #3d2b1f; box-shadow: inset 0 0 20px rgba(0,0,0,0.3), 0 10px 20px rgba(0,0,0,0.5);
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px);
+            background: var(--paper); color: #3d2b1f; padding: 20px 15px; width: 260px; margin: 20px auto; 
+            border: 1px solid #3d2b1f; 
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
         }
-        .wanted-photo { width: 200px; height: 200px; object-fit: cover; border: 4px solid #3d2b1f; filter: sepia(0.9) contrast(1.2) grayscale(0.3); }
-        .wanted-title { font-family: 'Courier New', monospace; font-weight: bold; font-size: 2.5rem; margin: 10px 0; letter-spacing: 5px; border-bottom: 3px solid #3d2b1f; }
+        /* Efecto de papel viejo y quemado en los bordes */
+        .wanted-card-css::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(transparent 60%, rgba(61, 43, 31, 0.3) 100%),
+                        url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnPjxmaWx0ZXIgaWQ9J25vaXNlJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC44JyBudW1PY3RhdmVzQXR0cmlidXRlPSs0JyBzdGl0Y2hUaWxlcz0nc3RpdGNoJy8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9JzEwMCUnIGhlaWdodD0nMTAwJScgZmlsdGVyPSd1cmwoI25vaXNlKScgb3BhY2l0eT0nMC4xJy8+PC9zdmc+');
+            pointer-events: none; mix-blend-mode: multiply;
+        }
+        .wanted-photo { width: 200px; height: 200px; object-fit: cover; border: 3px solid #3d2b1f; filter: sepia(1) contrast(1.2) grayscale(0.2); transform: rotate(-1deg); }
+        .wanted-title { font-family: 'Courier New', monospace; font-weight: 900; font-size: 2.8rem; margin: 5px 0 15px; letter-spacing: 3px; border-bottom: 4px double #3d2b1f; text-transform: uppercase; }
+        .wanted-name { font-family: 'Courier New', monospace; font-weight: bold; font-size: 1.5rem; margin: 15px 0; text-transform: uppercase; background: #3d2b1f; color: var(--paper); padding: 5px; transform: rotate(1deg); }
 
-        /* PODIO ÉPICO */
-        .podio-container { background: rgba(255,255,255,0.1); border: 3px solid var(--gold); border-radius: 25px; padding: 30px 20px; width: 95%; backdrop-filter: blur(10px); }
-        #final-team-photo { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 25px; margin-top: 20px; }
-        .player-podio { position: relative; text-align: center; width: 100px; }
-        .img-podio { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; object-fit: cover; z-index: 5; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .winner-glow { box-shadow: 0 0 25px var(--gold); border-color: var(--gold); }
+        /* --- PODIO ÉPICO --- */
+        .podio-container { background: rgba(255,255,255,0.15); border: 2px solid var(--gold); border-radius: 25px; padding: 30px 15px; width: 98%; max-width: 600px; backdrop-filter: blur(15px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        #final-team-photo { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 25px; margin-top: 30px; }
+        .player-podio { position: relative; text-align: center; width: 110px; }
+        .img-podio { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; object-fit: cover; z-index: 5; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.4); transition: transform 0.3s; }
+        .img-podio:hover { transform: scale(1.1) rotate(3deg); }
+        .winner-glow { box-shadow: 0 0 30px var(--gold), 0 0 10px var(--gold) inset; border-color: var(--gold); }
         
         .lagarto-epico { 
-            position: absolute; font-size: 8rem; top: -65px; left: 50%; transform: translateX(-50%) rotate(-15deg); 
-            z-index: 1; filter: drop-shadow(5px 5px 8px black) contrast(1.5); 
-            animation: floatLagarto 3s ease-in-out infinite alternate;
+            position: absolute; font-size: 8.5rem; top: -80px; left: 50%; transform: translateX(-50%) rotate(-20deg); 
+            z-index: 1; filter: drop-shadow(8px 8px 12px black) contrast(1.3); 
+            animation: floatLagarto 4s ease-in-out infinite alternate;
         }
-        @keyframes floatLagarto { from{transform: translateX(-50%) rotate(-15deg) translateY(0);} to{transform: translateX(-50%) rotate(-15deg) translateY(-10px);} }
+        @keyframes floatLagarto { from{transform: translateX(-50%) rotate(-20deg) translateY(0) scale(1);} to{transform: translateX(-50%) rotate(-18deg) translateY(-15px) scale(1.05);} }
 
-        .medals-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; margin-top: 5px; }
-        .tiny-medal { background: var(--gold); color: black; font-size: 0.5rem; font-weight: bold; padding: 2px 4px; border-radius: 4px; border: 1px solid #333; }
+        .medals-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 8px; }
+        .tiny-medal { background: linear-gradient(45deg, var(--gold), #e6c300); color: black; font-size: 0.55rem; font-weight: bold; padding: 3px 6px; border-radius: 6px; border: 1px solid #998100; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
         
-        .curiosidad-box { font-size: 0.85rem; color: #555; font-style: italic; margin-top: 10px; background: #fffde7; padding: 10px; border-radius: 10px; border-left: 5px solid var(--gold); text-align: left; }
+        .curiosidad-box { font-size: 0.9rem; color: #444; font-style: italic; margin-top: 15px; background: #fff9c4; padding: 15px; border-radius: 15px; border-left: 6px solid var(--gold); text-align: left; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
-    <div style="background: rgba(0,0,0,0.85); padding: 25px; border-radius: 35px; border: 2px solid var(--s); width: 95%; max-width: 420px;">
-        <h1 style="color:var(--s); margin:0; text-shadow: 2px 2px 4px black;">🕵️‍♂️ Espía en Jaén</h1>
-        <p style="color:var(--gold); font-size: 0.8rem; margin-top: 5px;">EDICIÓN ÉPICA</p>
+    <div style="background: rgba(0,0,0,0.8); padding: 30px 20px; border-radius: 40px; border: 3px solid var(--s); width: 95%; max-width: 450px; backdrop-filter: blur(5px);">
+        <h1 style="color:var(--s); margin:0; text-shadow: 3px 3px 6px black; font-size: 2.5rem;">🕵️‍♂️ Espía en Jaén</h1>
+        <p style="color:var(--gold); font-size: 0.9rem; margin-top: 5px; letter-spacing: 2px; font-weight: bold;">EDICIÓN DEFINITIVA</p>
         
-        <div id="lista-jugadores" style="display:flex; flex-wrap:wrap; justify-content:center; margin:20px 0; min-height: 60px; background: rgba(255,255,255,0.1); border-radius: 15px; padding: 10px;">
-            <p style="color:#aaa; font-size:0.8rem; width:100%;" id="placeholder-lista">Añade exploradores...</p>
+        <div id="lista-jugadores" style="display:flex; flex-wrap:wrap; justify-content:center; gap: 10px; margin:25px 0; min-height: 70px; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; border: 2px dashed rgba(255,255,255,0.3);">
+            <p style="color:#bbb; font-size:0.9rem; width:100%; margin: auto;" id="placeholder-lista">Esperando exploradores...</p>
         </div>
         
-        <div style="display:flex; gap:10px; justify-content:center;">
-            <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:12px; border-radius:10px; width:50%; border:none; text-align:center;">
-            <input type="number" id="in-edad" placeholder="Edad..." style="padding:12px; border-radius:10px; width:30%; border:none; text-align:center;">
+        <div style="display:flex; gap:10px; justify-content:center; margin-bottom: 15px;">
+            <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:15px; border-radius: 15px; width:55%; border:none; text-align:center; font-size: 1rem; background: rgba(255,255,255,0.9);">
+            <input type="number" id="in-edad" placeholder="Edad" style="padding:15px; border-radius: 15px; width:35%; border:none; text-align:center; font-size: 1rem; background: rgba(255,255,255,0.9);">
         </div>
-        <button class="btn" onclick="abrirCamara()" style="margin-top:15px;">📸 AÑADIR JUGADOR</button>
-        <button class="btn" id="btn-play" onclick="iniciarJuego()" style="background:var(--gold); color:black; display:none; box-shadow: 0 0 20px var(--gold);">🚀 ¡EMPEZAR AVENTURA!</button>
+        <button class="btn" onclick="abrirCamara()">📸 AÑADIR JUGADOR</button>
+        <button class="btn" id="btn-play" onclick="iniciarJuego()" style="background:var(--gold); color:black; display:none; margin-top: 15px; box-shadow: 0 6px 0 #c6a700; font-size: 1.3rem;">🚀 ¡EMPEZAR MISIÓN!</button>
     </div>
 </div>
 
-<div id="s-cam" class="screen"><video id="camera-feed" style="width:100%; max-width:380px; transform:scaleX(-1); border-radius:20px; border:4px solid var(--gold); box-shadow: 0 10px 30px black;" autoplay playsinline muted></video><button class="btn" onclick="tomarFoto()">📸 ¡FOTO!</button></div>
+<div id="s-cam" class="screen" style="background: black;">
+    <video id="camera-feed" style="width:100%; max-width:400px; height: 400px; object-fit: cover; transform:scaleX(-1); border-radius:30px; border:5px solid var(--gold); box-shadow: 0 0 50px rgba(255,215,0,0.3);" autoplay playsinline muted></video>
+    <button class="btn" onclick="tomarFoto()" style="margin-top: 20px; width: auto; padding: 15px 40px; font-size: 1.5rem;">📸 ¡CLIC!</button>
+</div>
+
 <div id="s-game" class="screen"></div>
+
 <div id="s-podio-final" class="screen">
     <div class="podio-container">
-        <h1 style="color:var(--gold); text-shadow: 2px 2px 5px black; margin:0;">🏆 SALÓN DE LA FAMA 🏆</h1>
-        <p style="font-size:0.8rem;">Crónicas de la Provincia de Jaén</p>
+        <h1 style="color:var(--gold); text-shadow: 3px 3px 8px black; margin:0; font-size: 2.5rem;">🏆 SALÓN DE LA FAMA 🏆</h1>
+        <p style="font-size:0.9rem; color: #ddd; margin-top: 5px;">Crónicas de la Provincia de Jaén</p>
         <div id="final-team-photo"></div>
     </div>
-    <button class="btn" onclick="location.reload()" style="background:#444; margin-top:25px;">🎮 NUEVA PARTIDA (BORRAR)</button>
+    <button class="btn" onclick="location.reload()" style="background:#d32f2f; margin-top:30px; box-shadow: 0 4px 0 #9a0007;">🎮 BORRAR Y EMPEZAR DE CERO</button>
 </div>
 
 <script>
-    // ... (Datos de pueblos y niveles iguales que antes) ...
-    const pueblosInfo = [{n:"Bailén",c:"¡Aquí se ganó una gran batalla contra Napoleón!"},{n:"Cazorla",c:"¡Es el parque natural más grande de España!"},{n:"Úbeda",c:"Sus edificios renacentistas son Patrimonio de la Humanidad."},{n:"Baeza",c:"Aquí dio clases el poeta Antonio Machado."},{n:"Jaén",c:"¡Bajo su catedral vive el famoso Lagarto!"},{n:"Baños de la Encina",c:"Su castillo tiene 14 torres y es de barro."},{n:"Linares",c:"Cuna de grandes toreros y cantantes de flamenco."},{n:"Alcalá la Real",c:"Su fortaleza de la Mota domina todo el paisaje."},{n:"Segura de la Sierra",c:"Un pueblo precioso en lo alto de una montaña."},{n:"Cabra del Santo Cristo",c:"Famoso por una imagen que dicen que es milagrosa."}];
-    const niveles = { infantil: [{p:"SOL",e:"☀️",s:"🌙"},{p:"PERRO",e:"🐶",s:"🐱"},{p:"COCHE",e:"🚗",s:"🚲"},{p:"MANZANA",e:"🍎",s:"🍌"},{p:"PELOTA",e:"⚽",s:"🏀"}], junior: [{p:"ACEITUNA",e:"🫒"},{p:"LAGARTO",e:"🦎"},{p:"CASTILLO",e:"🏰"},{p:"OLIVO",e:"🌳"},{p:"CATEDRAL",e:"⛪"}], adulto: [{p:"PIPIRRANA",e:"🥗"},{p:"ALMAZARA",e:"🏭"},{p:"VÍA VERDE",e:"🚲"},{p:"RENACIMIENTO",e:"🏛️"},{p:"ANDAS",e:"🙌"}]};
+    // --- DATOS ---
+    const pueblosInfo = [
+        {n:"Bailén",c:"¡Famoso por la batalla de 1808! Sus habitantes son conocidos como 'charqueros'."},
+        {n:"Cazorla",c:"El corazón de la sierra. ¡Aquí nace el río Guadalquivir!"},
+        {n:"Úbeda",c:"Junto con Baeza, es Patrimonio de la Humanidad. ¡Una joya del Renacimiento!"},
+        {n:"Baeza",c:"Aquí impartió clases el famoso poeta Antonio Machado."},
+        {n:"Jaén Capital",c:"¡Bajo su imponente catedral se esconde la leyenda del Lagarto de la Magdalena!"},
+        {n:"Baños de la Encina",c:"Su castillo califal es uno de los más antiguos y mejor conservados de Europa."},
+        {n:"Linares",c:"Ciudad de minas, cuna del cantante Raphael y de grandes toreros."},
+        {n:"Alcalá la Real",c:"Dominada por la majestuosa Fortaleza de la Mota en lo alto del cerro."},
+        {n:"Segura de la Sierra",c:"Uno de los pueblos más bonitos de España, a más de 1000m de altura."},
+        {n:"Cabra del Santo Cristo",c:"Conocido por la imagen del Cristo de Burgos y su peregrinación."}
+    ];
+    const niveles = { 
+        infantil: [{p:"SOL",e:"☀️",s:"🌙"},{p:"PERRO",e:"🐶",s:"🐱"},{p:"COCHE",e:"🚗",s:"🚲"},{p:"MANZANA",e:"🍎",s:"🍌"},{p:"PELOTA",e:"⚽",s:"🏀"}], 
+        junior: [{p:"ACEITUNA",e:"🫒"},{p:"LAGARTO",e:"🦎"},{p:"CASTILLO",e:"🏰"},{p:"OLIVO",e:"🌳"},{p:"CATEDRAL",e:"⛪"}], 
+        adulto: [{p:"PIPIRRANA",e:"🥗"},{p:"ALMAZARA",e:"🏭"},{p:"VÍA VERDE",e:"🚲"},{p:"RENACIMIENTO",e:"🏛️"},{p:"ANDAS",e:"🙌"}]
+    };
 
     let jugadores = []; let usados = []; let streamMedia; let partida = {};
 
-    // FUNCIÓN PARA TRANSICIONES SUAVES
+    // --- FUNCIONES DE NAVEGACIÓN Y CÁMARA (ARREGLADAS) ---
     function mostrar(id) {
         const current = document.querySelector('.screen.active');
+        const next = document.getElementById(id);
         if(current) {
-            current.classList.remove('active');
-            setTimeout(() => {
-                current.style.display = 'none';
-                const next = document.getElementById(id);
-                next.style.display = 'flex';
-                setTimeout(() => next.classList.add('active'), 50);
-            }, 600); // Espera a que termine la transición de salida
-        } else {
-             const next = document.getElementById(id);
-             next.style.display = 'flex';
-             setTimeout(() => next.classList.add('active'), 50);
-        }
+            current.style.opacity = '0'; current.style.transform = 'scale(0.9)';
+            setTimeout(() => { current.classList.remove('active'); next.classList.add('active'); }, 300);
+        } else { next.classList.add('active'); }
     }
 
     async function abrirCamara() {
-        if(!document.getElementById('in-nombre').value || !document.getElementById('in-edad').value) return alert("Faltan datos");
-        streamMedia = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-        document.getElementById('camera-feed').srcObject = streamMedia;
-        mostrar('s-cam');
+        const nombreIn = document.getElementById('in-nombre'); const edadIn = document.getElementById('in-edad');
+        if(!nombreIn.value || !edadIn.value) return alert("¡Falta nombre o edad!");
+        
+        if(streamMedia) streamMedia.getTracks().forEach(t => t.stop()); // Limpiar stream anterior
+        
+        try {
+            streamMedia = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: {ideal: 400}, height: {ideal: 400} } });
+            const videoEl = document.getElementById('camera-feed');
+            videoEl.srcObject = streamMedia;
+            mostrar('s-cam');
+        } catch(e) { alert("Error: No se pudo acceder a la cámara. Revisa los permisos."); }
     }
 
     function tomarFoto() {
-        const v=document.getElementById('camera-feed'); const c=document.createElement('canvas'); c.width=400; c.height=400; c.getContext('2d').drawImage(v,0,0,400,400);
+        const v=document.getElementById('camera-feed'); const c=document.createElement('canvas'); c.width=400; c.height=400; 
+        const ctx=c.getContext('2d'); ctx.translate(400,0); ctx.scale(-1,1); ctx.drawImage(v,0,0,400,400); // Espejo correcto
+        
         jugadores.push({ nombre: document.getElementById('in-nombre').value.toUpperCase(), edad: parseInt(document.getElementById('in-edad').value), foto: c.toDataURL(), puntos:0, medallas:[] });
-        streamMedia.getTracks().forEach(t=>t.stop());
+        
+        if(streamMedia) streamMedia.getTracks().forEach(t=>t.stop()); // Parar stream
+        
         document.getElementById('in-nombre').value=""; document.getElementById('in-edad').value="";
         actualizarListaRegistro(); mostrar('s1');
     }
 
     function actualizarListaRegistro() {
-        document.getElementById('placeholder-lista').style.display = 'none';
-        document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `
-            <div style="text-align:center; margin:5px;">
-                <img src="${j.foto}" style="width:55px; height:55px; border-radius:50%; border:3px solid var(--gold); object-fit:cover;">
-                <div style="font-size:0.7rem; margin-top:2px;">${j.nombre}</div>
-            </div>`).join('');
+        const lista = document.getElementById('lista-jugadores'); const placeholder = document.getElementById('placeholder-lista');
+        if(jugadores.length > 0) placeholder.style.display = 'none';
+        lista.innerHTML = jugadores.map(j => `
+            <div style="text-align:center; position:relative; animation: popIn 0.4s ease;">
+                <img src="${j.foto}" style="width:65px; height:65px; border-radius:50%; border:3px solid var(--gold); object-fit:cover; box-shadow: 0 5px 10px rgba(0,0,0,0.3);">
+                <div style="font-size:0.7rem; margin-top:4px; font-weight:bold;">${j.nombre}</div>
+            </div>`).join('') || placeholder.outerHTML;
          document.getElementById('btn-play').style.display = jugadores.length >= 3 ? "block" : "none";
     }
 
+    // --- LÓGICA DEL JUEGO ---
     function iniciarJuego() {
         const edadMin = Math.min(...jugadores.map(j=>j.edad));
         let pool = (edadMin<=6)?niveles.infantil:(edadMin<=11?niveles.junior:niveles.adulto);
@@ -147,74 +186,91 @@
 
     function prepararTurno() {
         mostrar('s-game'); const j=jugadores[partida.turno];
-        document.getElementById('s-game').innerHTML = `<div class="card" onclick="revelar()"><h2>${j.nombre} (${j.edad})</h2><div style="font-size:6rem; animation: floatLagarto 2s infinite alternate;">🧭</div><p>TOCA PARA MISION</p></div>`;
+        document.getElementById('s-game').innerHTML = `<div class="card"><h2>Turno de:<br><b style="color:var(--p); font-size:2rem;">${j.nombre}</b></h2><p>(${j.edad} años)</p><div style="font-size:7rem; margin:20px 0; animation: floatLagarto 3s ease-in-out infinite;">🧭</div><p style="color:#666; font-weight:bold;">TOCA PARA VER TU MISIÓN SECRET</p></div>`;
+        document.querySelector('#s-game .card').onclick = revelar;
     }
 
     function revelar() {
         const esE=(partida.turno===partida.espiaIdx); let icono=esE?'🗺️':partida.palabra.e; let texto=esE?'¡ERES EL ESPÍA!':partida.palabra.p;
-        if(esE&&partida.esInfantil){icono=partida.palabra.s; texto="¡ERES EL ESPÍA! (Pista parecida)";}
-        document.getElementById('s-game').innerHTML = `<div class="card" style="border:8px solid ${esE?'var(--red)':'var(--p)'}"><div style="font-size:6rem;">${icono}</div><h2>${texto}</h2><button class="btn" onclick="pasarSiguiente()">ENTENDIDO</button></div>`;
+        let instruccion = esE ? 'Disimula. Intenta averiguar la palabra de los demás.' : 'Explica la palabra SIN decirla.';
+        if(esE&&partida.esInfantil){icono=partida.palabra.s; texto="¡ERES EL ESPÍA! (Pista parecida)"; instruccion="Tu dibujo se parece, ¡pero no es el mismo!";}
+        
+        document.getElementById('s-game').innerHTML = `<div class="card" style="border:8px solid ${esE?'var(--red)':'var(--p)'}"><div style="font-size:7rem; margin-bottom:10px;">${icono}</div><h1 style="margin:5px 0; font-size:2.2rem;">${texto}</h1><p style="font-size:1rem; padding:10px; background:#f5f5f5; border-radius:10px;">${instruccion}</p><button class="btn" onclick="pasarSiguiente()" style="margin-top:20px;">¡ENTENDIDO!</button></div>`;
     }
 
     function pasarSiguiente() { partida.turno++; if(partida.turno<jugadores.length)prepararTurno(); else{partida.turnoVoto=0; votar();} }
+    
     function votar() {
         const v=jugadores[partida.turnoVoto];
-        let btns=jugadores.map((j,i)=>i!==partida.turnoVoto?`<button class="btn" onclick="regVoto(${i})" style="padding:12px; margin:5px 0;">${j.nombre}</button>`:'').join('');
-        document.getElementById('s-game').innerHTML = `<div class="card"><h2>${v.nombre}</h2><p>¿Quién es el infiltrado?</p><div style="display:flex; flex-direction:column;">${btns}</div></div>`;
+        let btns=jugadores.map((j,i)=>i!==partida.turnoVoto?`<button class="btn" onclick="regVoto(${i})" style="background:white; color:#333; border:2px solid var(--p); box-shadow:none;">${j.nombre}</button>`:'').join('');
+        document.getElementById('s-game').innerHTML = `<div class="card"><h2>Vota ${v.nombre}</h2><p style="font-size:1.2rem;">¿Quién es el infiltrado?</p><div style="display:flex; flex-direction:column; gap:5px; max-height:300px; overflow-y:auto;">${btns}</div></div>`;
     }
     function regVoto(i) { jugadores[i].votos++; partida.turnoVoto++; if(partida.turnoVoto<jugadores.length)votar(); else mostrarWanted(); }
 
     function mostrarWanted() {
         const c = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
         document.getElementById('s-game').innerHTML = `
-            <div class="wanted-card-css">
-                <div class="wanted-title">WANTED</div>
+            <div class="wanted-card-css" style="animation: popIn 0.5s ease;">
+                <div class="wanted-title">SE BUSCA</div>
                 <img src="${c.foto}" class="wanted-photo">
-                <h2 style="margin:10px 0; font-family:'Courier New';">${c.nombre}</h2>
-                <p style="font-size:0.7rem;">Recompensa: 1000 Aceitunas</p>
+                <div class="wanted-name">${c.nombre}</div>
+                <p style="font-size:0.8rem; font-weight:bold; margin:0;">RECOMPENSA: UN POTOSÍ</p>
             </div>
-            <button class="btn" onclick="resultado()" style="background:var(--gold); color:black; box-shadow: 0 0 15px var(--gold);">¿ERA EL ESPÍA?</button>`;
+            <button class="btn" onclick="resultado()" style="background:var(--gold); color:black; box-shadow: 0 6px 0 #c6a700; font-size:1.3rem; margin-top:20px;">¿ES EL ESPÍA?</button>`;
     }
 
     function resultado() {
         const masV=[...jugadores].sort((a,b)=>b.votos-a.votos)[0]; const esE=(jugadores.indexOf(masV)===partida.espiaIdx);
         let gans=[]; if(esE){jugadores.forEach((j,i)=>{if(i!==partida.espiaIdx){j.puntos+=10;gans.push(j);}});}else{jugadores[partida.espiaIdx].puntos+=20;gans.push(jugadores[partida.espiaIdx]);}
         const infoP=pueblosInfo[Math.floor(Math.random()*pueblosInfo.length)]; gans.forEach(g=>g.medallas.push(infoP.n));
-        document.getElementById('s-game').innerHTML = `<div class="card"><h1>${esE?'¡CAZADO!':'¡SE ESCAPÓ!'}</h1><p>El espía era <b>${jugadores[partida.espiaIdx].nombre}</b></p>
-            ${gans.length>0 ? `<div class="curiosidad-box">🎁 Medalla de <b>${infoP.n}</b> para los ganadores.<br>Sabías que... ${infoP.c}</div>` : ''}
-            <button class="btn" onclick="iniciarJuego()">🔄 OTRA RONDA</button><button class="btn" onclick="finalizar()" style="background:#444;">🏁 VER PODIO FINAL</button></div>`;
+        
+        document.getElementById('s-game').innerHTML = `
+            <div class="card">
+                <h1 style="color:${esE?'var(--p)':'var(--red)'; font-size:2.5rem;">${esE?'¡CAZADO!':'¡SE ESCAPÓ!'}</h1>
+                <p style="font-size:1.2rem;">El espía era: <b style="color:var(--p);">${jugadores[partida.espiaIdx].nombre}</b></p>
+                
+                ${gans.length>0 ? `
+                <div class="curiosidad-box">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <span style="font-size:2rem;">🏅</span>
+                        <div><b>¡Medalla de ${infoP.n}!</b><br>Ganada por: ${gans.map(g=>g.nombre).join(', ')}</div>
+                    </div>
+                    💡 <i>${infoP.c}</i>
+                </div>` : ''}
+
+                <div style="display:flex; gap:10px; margin-top:25px;">
+                    <button class="btn" onclick="iniciarJuego()" style="flex:1;">🔄 OTRA RONDA</button>
+                    <button class="btn" onclick="finalizar()" style="background:#444; flex:1;">🏁 VER PODIO</button>
+                </div>
+            </div>`;
     }
 
     function finalizar() {
         const maxP=Math.max(...jugadores.map(j=>j.puntos)); const minP=Math.min(...jugadores.map(j=>j.puntos));
-        const perdedor=jugadores.find(j=>j.puntos===minP && j.puntos<maxP); // Solo hay perdedor si no hay empate total
-
+        
         document.getElementById('final-team-photo').innerHTML = jugadores.map(j => {
             const esGanador = j.puntos === maxP && j.puntos > 0;
-            const esPerdedorAbsoluto = j === perdedor;
+            // ¡Ahora TODOS los que empaten en último lugar tienen lagarto!
+            const esPerdedor = j.puntos === minP && j.puntos < maxP; 
             
-            // Renderizar TODAS las medallas
-            const medallasHTML = j.medallas.map(m => `<span class="tiny-medal">${m}</span>`).join('');
+            const medallasHTML = j.medallas.length > 0 
+                ? j.medallas.map(m => `<span class="tiny-medal">${m}</span>`).join('')
+                : '<span style="font-size:0.6rem; opacity:0.6; font-style:italic;">Sin medallas aún</span>';
 
             return `
-            <div class="player-podio">
-                ${esPerdedorAbsoluto ? '<div class="lagarto-epico">🦎</div>' : ''}
+            <div class="player-podio" style="animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                ${esPerdedor ? '<div class="lagarto-epico">🦎</div>' : ''}
                 <img src="${j.foto}" class="img-podio ${esGanador?'winner-glow':''}">
-                
-                ${esGanador ? '<div style="position:absolute; top:-35px; right:-10px; font-size:3rem; z-index:20; filter:drop-shadow(0 0 5px gold);">👑</div>' : ''}
-                
-                <div style="font-weight:bold; margin-top:10px; font-size:0.9rem;">${j.nombre}</div>
-                <div style="color:var(--gold); font-size:1.1rem; font-weight:bold;">${j.puntos} PTS</div>
-                
-                <div class="medals-container">
-                    ${medallasHTML || '<span style="font-size:0.6rem; opacity:0.7;">Sin medallas</span>'}
-                </div>
+                ${esGanador ? '<div style="position:absolute; top:-40px; right:-15px; font-size:3.5rem; z-index:20; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));">👑</div>' : ''}
+                <div style="font-weight:bold; margin-top:12px; font-size:1rem; text-shadow: 1px 1px 2px black;">${j.nombre}</div>
+                <div style="color:var(--gold); font-size:1.3rem; font-weight:900; text-shadow: 1px 1px 2px black;">${j.puntos} PTS</div>
+                <div class="medals-container">${medallasHTML}</div>
             </div>`;
         }).join('');
         mostrar('s-podio-final');
     }
-    
-    // Iniciar mostrando la primera pantalla
+
+    // Iniciar animación de entrada
     setTimeout(() => document.getElementById('s1').classList.add('active'), 100);
 </script>
 </body>
