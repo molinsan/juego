@@ -3,196 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mímica Pro Jaén</title>
+    <title>Mímica Andalucía PRO</title>
     <style>
-        :root { --p: #4A90E2; --s: #50E3C2; --imp: #FF5E5E; --dark: #1a1a1a; --gold: #FFD700; --wa: #25D366; }
-        body { font-family: 'Comic Sans MS', sans-serif; text-align: center; margin: 0; background: #FFF; overflow: hidden; touch-action: manipulation; }
+        :root { 
+            --p: #2E7D32; /* Verde Andalucía */
+            --s: #81C784; 
+            --dark: #0b1a2a; 
+            --gold: #FFD700; 
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; margin: 0; background: var(--dark); color: white; 
+            overflow: hidden; touch-action: manipulation; 
+        }
         .screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
-        .btn { background: var(--p); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.4rem; font-weight: bold; width: 85%; box-shadow: 0 6px #2171c7; cursor: pointer; margin: 8px 0; }
-        .btn-money { background: var(--gold); color: #333; font-size: 0.9rem; padding: 10px; border-radius: 10px; width: 40%; box-shadow: 0 4px #b89b00; margin: 5px; border:none; font-weight: bold; cursor: pointer; }
-        .btn-share { background: var(--wa); color: white; padding: 12px; border-radius: 15px; font-size: 1rem; border: none; cursor: pointer; margin-top: 10px; font-weight: bold; box-shadow: 0 4px #128C7E; }
-        .input-name { padding: 12px; font-size: 1.1rem; border-radius: 10px; border: 2px solid #ccc; width: 70%; text-transform: uppercase; margin-bottom: 10px; }
-        .card { background: #f9f9f9; padding: 20px; border-radius: 30px; border: 10px solid var(--p); width: 90%; max-width: 400px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .emoji-3d { font-size: 6rem; display: block; margin: 10px 0; filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.1)); }
-        .mision-box { background: #eee; padding: 15px; border-radius: 15px; margin-top: 10px; border: 2px dashed #999; }
-        select { padding: 15px; font-size: 1.1rem; border-radius: 15px; margin-bottom: 15px; width: 85%; border: 3px solid var(--p); }
-        #ad-container { background: white; border: 2px solid #ddd; border-radius: 15px; padding: 20px; width: 90%; max-width: 350px; }
-        .premio-box { background: #fff3cd; border: 2px solid #ffeeba; padding: 15px; border-radius: 15px; margin-top: 15px; color: #856404; }
+        .card { 
+            background: white; color: #333; padding: 20px; border-radius: 20px; 
+            width: 95%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        .btn { 
+            background: var(--p); color: white; border: none; padding: 15px; border-radius: 15px; 
+            font-size: 1.1rem; font-weight: bold; width: 85%; cursor: pointer; margin: 8px 0; text-decoration: none; display: inline-block;
+        }
+
+        /* MOTOR DE RECORTE (SPRITE) */
+        .sprite-container { 
+            width: 200px; height: 200px; margin: 10px auto; 
+            border-radius: 15px; border: 4px solid var(--p); 
+            overflow: hidden; background: #eee; 
+            display: flex; justify-content: flex-start; align-items: flex-start; 
+        }
+        #v-sprite { display: block; width: 1024px; pointer-events: none; }
+
+        /* LISTA JUGADORES */
+        #lista-jugadores { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .perfil { position: relative; width: 70px; }
+        .perfil img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--s); object-fit: cover; }
+        .puntos-tag { position: absolute; top: -5px; right: 0; background: var(--gold); color: black; font-size: 0.7rem; padding: 2px 5px; border-radius: 8px; font-weight: bold; }
+
+        /* CAMARA */
+        #camera-feed { width: 100%; border-radius: 20px; background: #000; transform: scaleX(-1); }
+
+        /* CARTEL WANTED */
+        .wanted-container {
+            background-image: url('wanted_frame.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            max-width: 400px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .wanted-photo-frame { 
+            width: 215px; height: 215px; margin-top: 118px; 
+            overflow: hidden; border: 2px solid #3d2b1f;
+        }
+        .wanted-photo-frame img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.8); }
+        .wanted-text-name { margin-top: 15px; font-family: 'Courier New', monospace; font-weight: bold; font-size: 1.8rem; color: #3d2b1f; text-transform: uppercase; }
+
+        /* FOOTER INFO */
+        .footer-links { margin-top: 15px; font-size: 0.8rem; }
+        .footer-links a { color: var(--s); text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
-<div id="s0" class="screen active">
-    <div id="ad-container">
-        <h2>📢 Publicidad</h2>
-        <div style="background: #e8f4fd; height: 150px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 2px solid var(--p); margin-bottom: 10px;">
-            <p style="padding: 10px;"><b>Tu valla de Jaén aquí</b></p>
-        </div>
-        <div style="display: flex; justify-content: center;">
-            <button class="btn-money" onclick="window.open('mailto:molinsan.jl@gmail.com?subject=Publicidad')">✉️ ANÚNCIATE</button>
-            <button class="btn-money" style="background: #E0BBE4; box-shadow: 0 4px #957dad;" onclick="window.open('https://paypal.me/7moli')">💖 DONAR</button>
-        </div>
-        <p>Empezamos en <span id="countdown" style="font-weight:bold; color:var(--p);">5</span>...</p>
+<div id="s1" class="screen active">
+    <h1 style="color:var(--s)">🏰 Proyecto Andalucía</h1>
+    <div id="lista-jugadores"></div>
+    <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:12px; border-radius:10px; width:70%; border:none;">
+    <button class="btn" style="background:var(--s); color:black" onclick="abrirCamara()">📸 AÑADIR JUGADOR</button>
+    
+    <select id="select-nivel" style="padding:10px; margin-top:10px; width:75%; border-radius:10px;">
+        <option value="exploradores">🍼 Exploradores (1-12)</option>
+        <option value="junior">🎒 Junior (1-12)</option>
+        <option value="adulto">🍷 Adulto (1-12)</option>
+    </select>
+    
+    <button class="btn" onclick="iniciarJuego()">¡EMPEZAR PARTIDA! 🚀</button>
+
+    <div class="footer-links">
+        <a href="mailto:molinsan.jl@gmail.com">📩 Sugerencias</a>
+        <a href="https://paypal.me/7moli/tu-usuario" target="_blank">☕ Invítame a un café</a>
     </div>
 </div>
 
-<div id="s1" class="screen">
-    <h1>🎭 Mímica Pro</h1>
-    <select id="select-edad">
-        <option value="exploradores">🍼 2-4 años</option>
-        <option value="junior" selected>🎒 5-8 años</option>
-        <option value="expertos">🧠 9-13 años</option>
-        <option value="teens">📱 Teens</option>
-        <option value="adulto">🍷 Adultos</option>
-    </select>
-    <div id="lista-nombres"></div>
-    <button class="btn" style="background:#8bc34a;" onclick="agregarNombre('')">+ JUGADOR</button>
-    <button class="btn" style="background: #FF4500;" onclick="iniciarJuego()">🚀 ¡EMPEZAR!</button>
+<div id="s-cam" class="screen">
+    <video id="camera-feed" autoplay playsinline></video>
+    <button class="btn" onclick="tomarFoto()">CAPTURAR 📸</button>
+    <button class="btn" style="background:#555" onclick="cerrarCamara()">CANCELAR</button>
 </div>
 
 <div id="s2" class="screen">
-    <div id="tap-area" onclick="verCarta()">
-        <h2 id="tag-nombre">...</h2>
-        <span class="emoji-3d">🎁</span>
-        <p>TOCA PARA VER TU CARTA</p>
+    <div id="tap-card" class="card" onclick="revelarPalabra()">
+        <h2 id="turno-de"></h2>
+        <div style="font-size:5rem">🤐</div>
+        <p>TOCA PARA VER TU PALABRA</p>
     </div>
-    <div id="revelar-area" style="display:none">
-        <div id="v-card" class="card">
-            <h3 id="v-msg"></h3>
-            <span id="v-emoji" class="emoji-3d"></span>
-            <div id="pista-container" style="display:none"><p>PISTA: <span id="v-pista-emoji"></span></p></div>
-            <div class="mision-box"><p id="v-mision-text"></p></div>
-            <button class="btn" onclick="siguienteTurno()">OK ✅</button>
+    <div id="info-card" class="card" style="display:none">
+        <h3 id="msg-rol"></h3>
+        <div class="sprite-container" id="box-imagen">
+            <img id="v-sprite" src="">
         </div>
+        <h2 id="v-palabra" style="color:var(--p)"></h2>
+        <div style="background:#eee; padding:10px; border-radius:10px">
+            <span id="v-mision"></span>
+        </div>
+        <button class="btn" onclick="terminarTurno()">¡LISTO! ✅</button>
     </div>
 </div>
 
 <div id="s3" class="screen">
-    <div class="card">
-        <h2 id="accion-nombre" style="font-size: 2.5rem;"></h2>
-        <div class="mision-box">
-            <span id="accion-mision-emoji" class="emoji-3d" style="font-size: 4rem;"></span>
-            <p id="accion-mision-text" style="font-weight:bold;"></p>
+    <div class="wanted-container">
+        <div class="wanted-photo-frame">
+            <img id="wanted-img" src="">
         </div>
-        <button class="btn" id="btn-next-acc" onclick="proximaMision()">SIGUIENTE ➡️</button>
-        <button class="btn" id="btn-res" style="display:none; background:var(--imp);" onclick="verResultado()">¿QUIÉN ES EL ESPÍA?</button>
+        <div class="wanted-text-name" id="wanted-nombre"></div>
     </div>
+    <button class="btn" onclick="irARanking()" style="margin-top:20px">VER PUNTUACIONES</button>
 </div>
 
 <div id="s4" class="screen">
     <div class="card">
-        <p>DIBUJO: <span id="res-word"></span> <span id="res-emoji"></span></p>
-        <h2 style="color:var(--imp)">ESPÍA: <span id="res-imp"></span></h2>
-        
-        <div class="premio-box">
-            <h3>🎁 ¡PREMIO! (Secreto de Jaén):</h3>
-            <p id="curiosidad-texto" style="font-style: italic;"></p>
-            <button class="btn-share" onclick="compartirWhatsApp()">📲 COMPARTIR SECRETO</button>
+        <h2>Ranking Final</h2>
+        <div id="ranking-box" style="text-align:left"></div>
+        <div style="margin-top:20px; border-top: 1px solid #ddd; padding-top:10px;">
+            <p style="font-size:0.9rem">¿Te gusta el juego?</p>
+            <a href="https://paypal.me/7moli" class="btn" style="background:#0070ba; font-size:0.9rem;">Donar con PayPal 💙</a>
         </div>
     </div>
-    <button class="btn" onclick="location.reload()">🔄 OTRA PARTIDA</button>
+    <button class="btn" onclick="location.reload()">NUEVA PARTIDA 🔄</button>
 </div>
 
 <script>
+    const CONFIG = { total: 1024, cols: 3, filas: 4 };
     const db = {
-        exploradores: [{p:"GATO", e:"🐱", pi:"🥛"}, {p:"PERRO", e:"🐶", pi:"🦴"}],
-        junior: [{p:"BOMBERO", e:"👨‍🚒", pi:"🔥"}, {p:"POLICÍA", e:"👮", pi:"🚓"}],
-        expertos: [{p:"MINECRAFT", e:"⛏️", pi:"🟩"}, {p:"PIZZA", e:"🍕", pi:"🍕"}],
-        teens: [{p:"TIKTOK", e:"🤳", pi:"🎶"}, {p:"WIFI", e:"📶", pi:"🔌"}],
-        adulto: [{p:"HIPOTECA", e:"🏠", pi:"💸"}, {p:"RESACA", e:"🤢", pi:"🍺"}]
+        exploradores: ["GATO", "PERRO", "PATO", "CONEJO", "COCHE", "ELEFANTE", "PELOTA", "SOL", "LUNA", "PLATANO", "MANZANA", "FLOR"],
+        junior: ["BOMBERO", "POLICIA", "ASTRONAUTA", "PIRATA", "DINOSAURIO", "DRAGON", "MAGO", "SUPERHEROE", "CHEF", "FUTBOLISTA", "CIENTIFICO", "EXPLORADOR"],
+        adulto: ["CAFE", "PIZZA", "HIPOTECA", "RESACA", "TRABAJO", "VIAJE", "GIMNASIO", "COMPRA", "MOVIL", "RELOJ", "DORMIR", "DINERO"]
     };
-    const curiosidades = [
-        "¡La Catedral de Jaén es la única con balcones exteriores en todo el mundo!",
-        "¿Sabías que bajo el Castillo de Santa Catalina hay túneles secretos?",
-        "El Lagarto de la Malena explotó por comer demasiada pólvora... ¡o eso dicen!",
-        "En Jaén hay más de 66 millones de olivos. ¡Es un mar verde!"
-    ];
-    const misiones = [{t:"HAZ RUIDOS", e:"🔊"}, {t:"SOLO CUERPO", e:"👤"}, {t:"DIBUJA EN EL AIRE", e:"🎨"}];
-    let juego = { orden: [], actual: 0, actualAccion: 0, curiosidadActual: "" };
+    const misiones = ["🐌 Cámara Lenta", "🔊 Con Ruidos", "🖐️ Solo Manos", "🤖 Modo Robot", "👃 Con la Nariz"];
 
-    window.onload = () => { 
-        agregarNombre("JUGADOR 1");
-        agregarNombre("JUGADOR 2");
-        let c = 5;
-        let t = setInterval(() => {
-            c--; document.getElementById('countdown').innerText = c;
-            if(c<=0) { clearInterval(t); mostrarPantalla('s1'); }
-        }, 1000);
-    };
+    let jugadores = [];
+    let partida = {};
+    let stream;
 
-    function agregarNombre(n) {
-        const d = document.createElement('div');
-        d.innerHTML = `<input type="text" class="input-name" value="${n}">`;
-        document.getElementById('lista-nombres').appendChild(d);
+    async function abrirCamara() {
+        if(!document.getElementById('in-nombre').value) return alert("Escribe un nombre");
+        mostrar('s-cam');
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        document.getElementById('camera-feed').srcObject = stream;
+    }
+
+    function cerrarCamara() {
+        if(stream) stream.getTracks().forEach(t => t.stop());
+        mostrar('s1');
+    }
+
+    function tomarFoto() {
+        const video = document.getElementById('camera-feed');
+        const canvas = document.createElement('canvas');
+        canvas.width = 400; canvas.height = 400;
+        const ctx = canvas.getContext('2d');
+        ctx.translate(400, 0); ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, 400, 400);
+        
+        jugadores.push({
+            nombre: document.getElementById('in-nombre').value.toUpperCase(),
+            foto: canvas.toDataURL(),
+            puntos: 0
+        });
+        document.getElementById('in-nombre').value = "";
+        cerrarCamara();
+        actualizarLista();
+    }
+
+    function actualizarLista() {
+        document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `
+            <div class="perfil">
+                <div class="puntos-tag">${j.puntos}</div>
+                <img src="${j.foto}">
+            </div>
+        `).join('');
     }
 
     function iniciarJuego() {
-        const noms = Array.from(document.querySelectorAll('.input-name')).map(i => i.value.toUpperCase()).filter(v => v!=="");
-        const nivel = document.getElementById('select-edad').value;
-        juego.palabra = db[nivel][Math.floor(Math.random()*db[nivel].length)];
-        juego.orden = noms.sort(() => Math.random() - 0.5);
-        juego.impIdx = Math.floor(Math.random()*juego.orden.length);
-        juego.misiones = juego.orden.map(() => misiones[Math.floor(Math.random()*misiones.length)]);
-        mostrarPantalla('s2'); prepararTurno();
-    }
+        if(jugadores.length < 3) return alert("Mínimo 3 jugadores");
+        const nivel = document.getElementById('select-nivel').value;
+        const listaPalabras = db[nivel];
+        const randomWord = listaPalabras[Math.floor(Math.random() * listaPalabras.length)];
 
-    function mostrarPantalla(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+        partida = {
+            nivel: nivel,
+            palabra: randomWord,
+            idxPalabra: listaPalabras.indexOf(randomWord),
+            espiaIdx: Math.floor(Math.random() * jugadores.length),
+            turnoActual: 0,
+            mision: misiones[Math.floor(Math.random() * misiones.length)]
+        };
+        mostrar('s2');
+        prepararTurno();
     }
 
     function prepararTurno() {
-        document.getElementById('tag-nombre').innerText = "TURNO DE: " + juego.orden[juego.actual];
-        document.getElementById('tap-area').style.display = 'block';
-        document.getElementById('revelar-area').style.display = 'none';
+        document.getElementById('turno-de').innerText = "TURNO: " + jugadores[partida.turnoActual].nombre;
+        document.getElementById('tap-card').style.display = "block";
+        document.getElementById('info-card').style.display = "none";
     }
 
-    function verCarta() {
-        const esImp = (juego.actual === juego.impIdx);
-        document.getElementById('tap-area').style.display = 'none';
-        document.getElementById('revelar-area').style.display = 'block';
-        document.getElementById('v-msg').innerText = esImp ? "¡ERES EL ESPÍA! 😈" : "TU CARTA:";
-        document.getElementById('v-emoji').innerText = esImp ? "❓" : juego.palabra.e;
-        document.getElementById('pista-container').style.display = esImp ? "block" : "none";
-        document.getElementById('v-pista-emoji').innerText = juego.palabra.pi;
-        document.getElementById('v-mision-text').innerText = "Misión: " + juego.misiones[juego.actual].t;
-    }
+    function revelarPalabra() {
+        const esEspia = (partida.turnoActual === partida.espiaIdx);
+        document.getElementById('tap-card').style.display = "none";
+        document.getElementById('info-card').style.display = "block";
 
-    function siguienteTurno() {
-        juego.actual++;
-        if(juego.actual < juego.orden.length) prepararTurno();
-        else { juego.actualAccion = 0; mostrarPantalla('s3'); proximaMision(); }
-    }
-
-    function proximaMision() {
-        const n = juego.orden[juego.actualAccion];
-        document.getElementById('accion-nombre').innerText = n;
-        document.getElementById('accion-mision-text').innerText = juego.misiones[juego.actualAccion].t;
-        document.getElementById('accion-mision-emoji').innerText = juego.misiones[juego.actualAccion].e;
-        juego.actualAccion++;
-        if(juego.actualAccion >= juego.orden.length) {
-            document.getElementById('btn-next-acc').style.display = 'none';
-            document.getElementById('btn-res').style.display = 'block';
+        if(esEspia) {
+            document.getElementById('msg-rol').innerText = "🤫 ERES EL ESPÍA";
+            document.getElementById('v-palabra').innerText = "¡DISIMULA!";
+            document.getElementById('box-imagen').style.display = "none";
+            document.getElementById('v-mision').innerText = "Mézclate con los demás...";
+        } else {
+            document.getElementById('msg-rol').innerText = "TU PALABRA ES:";
+            document.getElementById('v-palabra').innerText = partida.palabra;
+            document.getElementById('box-imagen').style.display = "flex";
+            document.getElementById('v-mision').innerText = "MODO: " + partida.mision;
+            
+            const img = document.getElementById('v-sprite');
+            img.src = `./${partida.nivel}1-12.jpeg`;
+            const f = CONFIG.total / CONFIG.cols;
+            const col = partida.idxPalabra % CONFIG.cols;
+            const fila = Math.floor(partida.idxPalabra / CONFIG.cols);
+            img.style.transform = `translate(${-col * f}px, ${-fila * f}px)`;
         }
     }
 
-    function verResultado() {
-        document.getElementById('res-word').innerText = juego.palabra.p;
-        document.getElementById('res-emoji').innerText = juego.palabra.e;
-        document.getElementById('res-imp').innerText = juego.orden[juego.impIdx];
-        juego.curiosidadActual = curiosidades[Math.floor(Math.random()*curiosidades.length)];
-        document.getElementById('curiosidad-texto').innerText = juego.curiosidadActual;
-        mostrarPantalla('s4');
+    function terminarTurno() {
+        partida.turnoActual++;
+        if(partida.turnoActual < jugadores.length) {
+            prepararTurno();
+        } else {
+            revelarEspia();
+        }
     }
 
-    function compartirWhatsApp() {
-        const msj = encodeURIComponent("¡He ganado en Mímica Pro Jaén! 🎭 Mira qué secreto he descubierto: " + juego.curiosidadActual);
-        window.open("https://api.whatsapp.com/send?text=" + msj);
+    function revelarEspia() {
+        const espia = jugadores[partida.espiaIdx];
+        document.getElementById('wanted-img').src = espia.foto;
+        document.getElementById('wanted-nombre').innerText = espia.nombre;
+        mostrar('s3');
+    }
+
+    function irARanking() {
+        jugadores.forEach((j, i) => {
+            if(i === partida.espiaIdx) j.puntos -= 10;
+            else j.puntos += 5;
+        });
+        
+        const box = document.getElementById('ranking-box');
+        box.innerHTML = jugadores
+            .sort((a,b) => b.puntos - a.puntos)
+            .map(j => `<p><strong>${j.nombre}:</strong> ${j.puntos} puntos</p>`)
+            .join('');
+        mostrar('s4');
+    }
+
+    function mostrar(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
     }
 </script>
 </body>
 </html>
+
 
 
 
