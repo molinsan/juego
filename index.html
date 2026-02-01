@@ -6,52 +6,49 @@
     <title>Mímica Andalucía PRO</title>
     <style>
         :root { --p: #2E7D32; --s: #81C784; --dark: #0b1a2a; --gold: #FFD700; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; overflow: hidden; }
-        .screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; overflow: hidden; display: flex; flex-direction: column; }
+        .screen { display: none; flex: 1; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
         .card { background: white; color: #333; padding: 20px; border-radius: 20px; width: 95%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .btn { background: var(--p); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; width: 85%; cursor: pointer; margin: 8px 0; }
         
-        /* RECORTE DE IMAGEN */
-        .sprite-container { 
-            width: 200px; height: 200px; margin: 10px auto; 
-            border-radius: 15px; border: 4px solid var(--p); 
-            overflow: hidden; background: #eee; position: relative;
-        }
-        #v-sprite { position: absolute; width: 600px; height: 800px; display: block; } 
-
+        .emoji-display { font-size: 7rem; margin: 10px 0; }
         .perfil-img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--s); object-fit: cover; margin: 5px; }
-        #camera-feed { width: 100%; border-radius: 20px; transform: scaleX(-1); }
+        #camera-feed { width: 100%; border-radius: 20px; transform: scaleX(-1); background: #222; }
 
-        /* CARTEL WANTED */
         .wanted-container {
             background-image: url('wanted_frame.png');
             background-size: contain; background-repeat: no-repeat; background-position: center;
-            width: 350px; height: 450px; display: flex; flex-direction: column; align-items: center;
+            width: 320px; height: 420px; display: flex; flex-direction: column; align-items: center;
         }
-        .wanted-photo-frame { width: 190px; height: 190px; margin-top: 105px; overflow: hidden; border: 2px solid #3d2b1f; }
+        .wanted-photo-frame { width: 175px; height: 175px; margin-top: 100px; overflow: hidden; border: 2px solid #3d2b1f; background: #eee; }
         .wanted-photo-frame img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.8); }
-        .mision-tag { background: #fff3cd; color: #856404; padding: 8px; border-radius: 10px; font-weight: bold; margin-top: 10px; border: 1px solid #ffeeba; }
+        
+        footer { font-size: 0.8rem; padding: 10px; background: rgba(0,0,0,0.3); color: #aaa; }
+        .modo-box { font-size: 1.3rem; font-weight: bold; color: var(--p); background: #f0fdf4; padding: 15px; border-radius: 15px; margin: 10px 0; border: 2px dashed var(--p); }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
-    <h1 style="color:var(--s)">🏰 Proyecto Andalucía</h1>
+    <h1 style="color:var(--s); margin-bottom:5px;">🏰 Proyecto Andalucía</h1>
     <div id="lista-jugadores"></div>
-    <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:12px; border-radius:10px; width:70%; border:none;">
+    <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:12px; border-radius:10px; width:70%; border:none; margin-bottom:10px;">
     <button class="btn" style="background:var(--s); color:black" onclick="abrirCamara()">📸 AÑADIR JUGADOR</button>
-    <select id="select-nivel" style="padding:10px; margin-top:10px; width:75%; border-radius:10px;">
-        <option value="exploradores">🍼 Exploradores</option>
-        <option value="junior">🎒 Junior</option>
-        <option value="adulto">🍷 Adulto</option>
+    
+    <select id="select-nivel" style="padding:12px; width:85%; border-radius:10px; margin:10px 0;">
+        <option value="exp">🍼 Exploradores (4-8 años)</option>
+        <option value="jun">🎒 Junior (9-15 años)</option>
+        <option value="ado">📱 Adolescente (16-17 años)</option>
+        <option value="adu">🍷 Adultos (+18 años)</option>
     </select>
-    <button class="btn" onclick="iniciarJuego()">¡EMPEZAR! 🚀</button>
+    
+    <button class="btn" onclick="iniciarJuego()">¡EMPEZAR PARTIDA! 🚀</button>
 </div>
 
 <div id="s-cam" class="screen">
     <video id="camera-feed" autoplay playsinline></video>
-    <button class="btn" onclick="tomarFoto()">CAPTURAR 📸</button>
+    <button class="btn" onclick="tomarFoto()">CAPTURAR FOTO 📸</button>
 </div>
 
 <div id="s2" class="screen">
@@ -61,31 +58,30 @@
     </div>
     <div id="info-card" class="card" style="display:none">
         <h3 id="msg-rol"></h3>
-        <div class="sprite-container" id="box-imagen">
-            <img id="v-sprite" src="">
-        </div>
+        <div id="box-imagen" class="emoji-display"></div>
         <h2 id="v-palabra" style="color:var(--p)"></h2>
-        <div class="mision-tag">MODO: <span id="v-mision"></span></div>
-        <button class="btn" style="margin-top:15px" onclick="terminarTurno()">HECHO ✅</button>
+        <button class="btn" onclick="terminarTurno()">LISTO ✅</button>
     </div>
 </div>
 
-<div id="s-ajugar" class="screen">
-    <h1 style="font-size:4rem; color:var(--gold)">¡A JUGAR!</h1>
-    <p>Haced vuestra mímica con vuestros modos secretos...</p>
-    <button class="btn" onclick="mostrarVotacion()">¡TERMINAMOS! (A VOTAR) 🗳️</button>
+<div id="s-misiones" class="screen">
+    <div class="card">
+        <h2 id="mision-jugador-nombre"></h2>
+        <p>Tu forma de actuar es:</p>
+        <div class="modo-box" id="mision-texto"></div>
+        <button class="btn" onclick="siguienteMision()">¡HECHO! ▶️</button>
+    </div>
 </div>
 
 <div id="s-voto" class="screen">
     <div class="card">
-        <h2 id="votante-nombre"></h2>
-        <p>¿Quién es el espía?</p>
+        <h2 id="votante-nombre" style="color:var(--p)"></h2>
+        <p>Vota: ¿Quién es el espía?</p>
         <div id="botones-voto"></div>
     </div>
 </div>
 
 <div id="s-wanted" class="screen">
-    <h2 id="titulo-wanted">EL MÁS VOTADO ES...</h2>
     <div class="wanted-container">
         <div class="wanted-photo-frame"><img id="wanted-img" src=""></div>
         <h2 id="wanted-nombre" style="color:#3d2b1f; margin-top:10px; font-family:serif"></h2>
@@ -94,13 +90,26 @@
     <button class="btn" onclick="location.reload()">NUEVA PARTIDA 🔄</button>
 </div>
 
+<footer>
+    📧 molinsan.jl@gmail.com | 💸 PayPal: 7moli
+</footer>
+
 <script>
     const db = {
-        exploradores: ["GATO", "PERRO", "PATO", "CONEJO", "COCHE", "ELEFANTE", "PELOTA", "SOL", "LUNA", "PLATANO", "MANZANA", "FLOR"],
-        junior: ["BOMBERO", "POLICIA", "ASTRONAUTA", "PIRATA", "DINOSAURIO", "DRAGON", "MAGO", "SUPERHEROE", "CHEF", "FUTBOLISTA", "CIENTIFICO", "EXPLORADOR"],
-        adulto: ["CAFE", "PIZZA", "HIPOTECA", "RESACA", "TRABAJO", "VIAJE", "GIMNASIO", "COMPRA", "MOVIL", "RELOJ", "DORMIR", "DINERO"]
+        exp: [
+            {p:"LEÓN",e:"🦁"},{p:"GATO",e:"🐱"},{p:"PERRO",e:"🐶"},{p:"PATO",e:"🦆"},{p:"SAPO",e:"🐸"},{p:"CONEJO",e:"🐰"},{p:"MONO",e:"🐵"},{p:"CERDO",e:"🐷"},{p:"ELEFANTE",e:"🐘"},{p:"JIRAFA",e:"🦒"},{p:"SOL",e:"☀️"},{p:"LUNA",e:"🌙"},{p:"LLUVIA",e:"🌧️"},{p:"PELOTA",e:"⚽"},{p:"BICICLETA",e:"🚲"},{p:"TREN",e:"🚂"},{p:"AVIÓN",e:"✈️"},{p:"BARCO",e:"🚢"},{p:"HELADO",e:"🍦"},{p:"MANZANA",e:"🍎"},{p:"PLÁTANO",e:"🍌"},{p:"FLOR",e:"🌸"},{p:"ÁRBOL",e:"🌳"},{p:"CASA",e:"🏠"},{p:"COCHE",e:"🚗"},{p:"MUÑECA",e:"🪆"},{p:"DORMIR",e:"😴"},{p:"COMER",e:"🍕"},{p:"BEBER",e:"🥤"},{p:"LLORAR",e:"😢"},{p:"REIR",e:"😂"},{p:"NADAR",e:"🏊"},{p:"CORRER",e:"🏃"},{p:"SALTAR",e:"🦘"},{p:"BAILAR",e:"💃"},{p:"PINTAR",e:"🎨"},{p:"ZAPATOS",e:"👟"},{p:"SOMBRERO",e:"👒"},{p:"GAFAS",e:"👓"},{p:"RELOJ",e:"⌚"},{p:"PEZ",e:"🐟"},{p:"PÁJARO",e:"🐦"},{p:"MARIPOSA",e:"🦋"},{p:"ARAÑA",e:"🕷️"},{p:"LIBRO",e:"📖"},{p:"TELE",e:"📺"},{p:"CEPILLO",e:"🪥"},{p:"DULCE",e:"🍭"},{p:"REGALO",e:"🎁"},{p:"FIESTA",e:"🥳"}
+        ],
+        jun: [
+            {p:"POLICÍA",e:"👮"},{p:"BOMBERO",e:"👨‍🚒"},{p:"CHEF",e:"👨‍🍳"},{p:"MÉDICO",e:"👨‍⚕️"},{p:"PROFESOR",e:"👨‍🏫"},{p:"ASTRONAUTA",e:"👨‍🚀"},{p:"PIRATA",e:"🏴‍☠️"},{p:"MAGO",e:"🧙"},{p:"SUPERHÉROE",e:"🦸"},{p:"ZOMBI",e:"🧟"},{p:"FUTBOLISTA",e:"⚽"},{p:"TENISTA",e:"🎾"},{p:"GUITARRA",e:"🎸"},{p:"PIANO",e:"🎹"},{p:"CÁMARA",e:"📷"},{p:"ORDENADOR",e:"💻"},{p:"HAMBURGUESA",e:"🍔"},{p:"SUSHI",e:"🍣"},{p:"DINOSAURIO",e:"🦖"},{p:"DRAGÓN",e:"🐉"},{p:"ROBOT",e:"🤖"},{p:"CIENTÍFICO",e:"🧪"},{p:"DETECTIVE",e:"🕵️"},{p:"EXPLORADOR",e:"🤠"},{p:"ESQUIAR",e:"⛷️"},{p:"SURF",e:"🏄"},{p:"SKATE",e:"🛹"},{p:"VIDEOJUEGOS",e:"🎮"},{p:"CINE",e:"🎬"},{p:"MOCHILA",e:"🎒"},{p:"DINERO",e:"💰"},{p:"LLAVE",e:"🔑"},{p:"TELÉFONO",e:"📱"},{p:"AURICULARES",e:"🎧"},{p:"MICRÓFONO",e:"🎤"},{p:"MAPA",e:"🗺️"},{p:"BRÚJULA",e:"🧭"},{p:"COHETE",e:"🚀"},{p:"TESORO",e:"💎"},{p:"CANTAR",e:"🎤"},{p:"PESCAR",e:"🎣"},{p:"BOXEO",e:"🥊"},{p:"ESGRIMA",e:"🤺"},{p:"BICICLETA",e:"🚲"},{p:"MOTOCICLETA",e:"🏍️"},{p:"TRACTOR",e:"🚜"},{p:"HELICÓPTERO",e:"🚁"},{p:"PARACAÍDAS",e:"🪂"},{p:"CAMPING",e:"⛺"},{p:"HOGUERA",e:"🔥"}
+        ],
+        ado: [
+            {p:"INFLUENCER",e:"🤳"},{p:"TIKTOK",e:"💃"},{p:"EXAMEN",e:"📝"},{p:"GRADUACIÓN",e:"🎓"},{p:"PRIMER BESO",e:"😘"},{p:"CONCIERTO",e:"🎸"},{p:"GIMNASIO",e:"🏋️"},{p:"MODA",e:"👗"},{p:"VIAJE",e:"✈️"},{p:"FIESTA",e:"🎉"},{p:"AMOR",e:"❤️"},{p:"DESAMOR",e:"💔"},{p:"SUEÑO",e:"😴"},{p:"TRABAJO",e:"💼"},{p:"COCHE NUEVO",e:"🏎️"},{p:"PIZZA",e:"🍕"},{p:"CAFÉ",e:"☕"},{p:"HAMBURGUESA",e:"🍔"},{p:"DORMIR",e:"💤"},{p:"MÚSICA",e:"🎧"},{p:"PELÍCULA",e:"🍿"},{p:"COMPRAS",e:"🛍️"},{p:"PLAYA",e:"🏖️"},{p:"MONTAÑA",e:"🏔️"},{p:"FOTO",e:"📸"},{p:"WHATSAPP",e:"💬"},{p:"ESTUDIAR",e:"📚"},{p:"VACACIONES",e:"🍹"},{p:"DEPORTE",e:"⛹️"},{p:"NATURALEZA",e:"🌿"},{p:"AMIGOS",e:"👫"},{p:"FAMILIA",e:"👨‍👩‍👧"},{p:"FUTURO",e:"🔮"},{p:"DINERO",e:"💸"},{p:"TIEMPO",e:"⏳"},{p:"LIBERTAD",e:"🕊️"},{p:"AVENTURA",e:"🧗"},{p:"YOUTUBER",e:"📺"},{p:"GAMER",e:"🖱️"},{p:"NETFLIX",e:"🍿"},{p:"SÁBADO",e:"🕺"},{p:"DOMINGO",e:"🛌"},{p:"LUNES",e:"😫"},{p:"VERANO",e:"☀️"},{p:"INVIERNO",e:"❄️"},{p:"CINE",e:"🎟️"},{p:"CONDUCIR",e:"🚗"},{p:"ESTRÉS",e:"🤯"},{p:"FELICIDAD",e:"😊"},{p:"SELFIE",e:"🤳"}
+        ],
+        adu: [
+            {p:"HIPOTECA",e:"🏠"},{p:"IMPUESTOS",e:"🧾"},{p:"TRABAJO",e:"💼"},{p:"REUNIÓN",e:"🤝"},{p:"ESTRÉS",e:"😫"},{p:"CAFÉ",e:"☕"},{p:"VINO",e:"🍷"},{p:"CERVEZA",e:"🍺"},{p:"BODA",e:"👰"},{p:"DIVORCIO",e:"💔"},{p:"HIJOS",e:"👶"},{p:"COMPRA",e:"🛒"},{p:"LIMPIEZA",e:"🧹"},{p:"COCINAR",e:"🍳"},{p:"VIAJE",e:"🌍"},{p:"JUBILACIÓN",e:"🏖️"},{p:"GIMNASIO",e:"💪"},{p:"DIETA",e:"🥗"},{p:"DOLOR ESPALDA",e:"👴"},{p:"RESACA",e:"🤢"},{p:"GASOLINA",e:"⛽"},{p:"FACTURA",e:"💸"},{p:"NETFLIX",e:"📺"},{p:"SUEÑO",e:"💤"},{p:"VACACIONES",e:"🍹"},{p:"POLÍTICA",e:"🏛️"},{p:"INVERSIÓN",e:"📈"},{p:"BANCO",e:"🏦"},{p:"MÓVIL",e:"📱"},{p:"INTERNET",e:"🌐"},{p:"DORMIR",e:"🛌"},{p:"RELOJ",e:"⌚"},{p:"CENA",e:"🍽️"},{p:"FIESTA",e:"🕺"},{p:"AMOR",e:"💑"},{p:"SILENCIO",e:"🤫"},{p:"NATURALEZA",e:"🌲"},{p:"SALUD",e:"🍎"},{p:"DEPORTE",e:"🚴"},{p:"LECTURA",e:"📖"},{p:"MÚSICA",e:"🎼"},{p:"TEATRO",e:"🎭"},{p:"MUSEO",e:"🖼️"},{p:"CINE",e:"🍿"},{p:"BARRIO",e:"🏘️"},{p:"CIUDAD",e:"🏙️"},{p:"CAMPO",e:"🚜"},{p:"AVIÓN",e:"✈️"},{p:"CRUCERO",e:"🚢"},{p:"DESCANSO",e:"🧘"}
+        ]
     };
-    const listaMisiones = ["🐌 Cámara Lenta", "🔊 Haciendo Ruidos", "🖐️ Solo Manos", "🤖 Como un Robot", "👃 Con la Nariz", "💃 Bailando", "😴 Con mucho sueño"];
+    const listaMisiones = ["🐌 Cámara Lenta", "🔊 Haciendo Ruidos", "🖐️ Solo Manos", "🤖 Como un Robot", "👃 Con la Nariz", "💃 Bailando", "😴 Muy Cansado", "🦖 Como Dinosaurio", "🧟 Como Zombi", "🏃 Muy Rápido"];
 
     let jugadores = [];
     let partida = {};
@@ -125,7 +134,7 @@
         ctx.translate(300, 0); ctx.scale(-1, 1);
         ctx.drawImage(video, 0, 0, 300, 300);
         jugadores.push({ nombre: document.getElementById('in-nombre').value.toUpperCase(), foto: canvas.toDataURL(), votos: 0 });
-        stream.getTracks().forEach(t => t.stop());
+        if(stream) stream.getTracks().forEach(t => t.stop());
         document.getElementById('in-nombre').value = "";
         actualizarLista(); mostrar('s1');
     }
@@ -135,22 +144,20 @@
     }
 
     function iniciarJuego() {
-        if(jugadores.length < 3) return alert("Mínimo 3 personas");
+        if(jugadores.length < 2) return alert("Añade jugadores");
         const nivel = document.getElementById('select-nivel').value;
-        const listaPalabras = db[nivel];
-        
-        // Asignar misiones únicas a cada uno
-        let misionesMezcladas = [...listaMisiones].sort(() => Math.random() - 0.5);
+        const palabraObj = db[nivel][Math.floor(Math.random() * db[nivel].length)];
+        let misiones = [...listaMisiones].sort(() => Math.random() - 0.5);
 
         partida = { 
-            nivel, 
-            palabra: listaPalabras[Math.floor(Math.random()*listaPalabras.length)],
+            palabra: palabraObj.p,
+            emoji: palabraObj.e,
             espiaIdx: Math.floor(Math.random()*jugadores.length),
             turno: 0,
+            misionTurno: 0,
             votanteIdx: 0,
-            misionesAsignadas: jugadores.map((_, i) => misionesMezcladas[i % misionesMezcladas.length])
+            misionesAsignadas: jugadores.map((_, i) => misiones[i % misiones.length])
         };
-        partida.idxPalabra = listaPalabras.indexOf(partida.palabra);
         mostrar('s2'); prepararTurno();
     }
 
@@ -164,42 +171,40 @@
         const esEspia = (partida.turno === partida.espiaIdx);
         document.getElementById('tap-card').style.display = "none";
         document.getElementById('info-card').style.display = "block";
-        const sprite = document.getElementById('v-sprite');
-        
-        // Asignar la misión individual
-        document.getElementById('v-mision').innerText = partida.misionesAsignadas[partida.turno];
 
         if(esEspia) {
             document.getElementById('msg-rol').innerText = "🤫 ERES EL ESPÍA";
+            document.getElementById('box-imagen').innerText = "🕵️‍♂️";
             document.getElementById('v-palabra').innerText = "¡DISIMULA!";
-            document.getElementById('box-imagen').style.display = "none";
         } else {
             document.getElementById('msg-rol').innerText = "TU PALABRA ES:";
+            document.getElementById('box-imagen').innerText = partida.emoji;
             document.getElementById('v-palabra').innerText = partida.palabra;
-            document.getElementById('box-imagen').style.display = "block";
-            sprite.src = `./${partida.nivel}1-12.jpeg`;
-            
-            const col = partida.idxPalabra % 3;
-            const fila = Math.floor(partida.idxPalabra / 3);
-            sprite.style.left = `-${col * 200}px`;
-            sprite.style.top = `-${fila * 200}px`;
         }
     }
 
     function terminarTurno() {
         partida.turno++;
         if(partida.turno < jugadores.length) prepararTurno();
-        else mostrar('s-ajugar');
+        else { partida.misionTurno = 0; mostrarMision(); }
     }
 
-    function mostrarVotacion() {
-        mostrar('s-voto');
-        prepararVotacionIndividual();
+    function mostrarMision() {
+        mostrar('s-misiones');
+        const j = jugadores[partida.misionTurno];
+        document.getElementById('mision-jugador-nombre').innerText = "MÍMICA DE " + j.nombre;
+        document.getElementById('mision-texto').innerText = partida.misionesAsignadas[partida.misionTurno];
     }
 
-    function prepararVotacionIndividual() {
+    function siguienteMision() {
+        partida.misionTurno++;
+        if(partida.misionTurno < jugadores.length) mostrarMision();
+        else { partida.votanteIdx = 0; mostrar('s-voto'); actualizarVotanteUI(); }
+    }
+
+    function actualizarVotanteUI() {
         const votante = jugadores[partida.votanteIdx];
-        document.getElementById('votante-nombre').innerText = votante.nombre + ", ¿quién crees que es?";
+        document.getElementById('votante-nombre').innerText = votante.nombre + " VOTA:";
         const box = document.getElementById('botones-voto');
         box.innerHTML = "";
         jugadores.forEach((suspect, idx) => {
@@ -209,27 +214,24 @@
                 b.onclick = () => {
                     jugadores[idx].votos++;
                     partida.votanteIdx++;
-                    if(partida.votanteIdx < jugadores.length) prepararVotacionIndividual();
-                    else mostrarWanted();
+                    if(partida.votanteIdx < jugadores.length) actualizarVotanteUI();
+                    else finalizar();
                 };
                 box.appendChild(b);
             }
         });
     }
 
-    function mostrarWanted() {
+    function finalizar() {
         const culpable = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
-        const esEspiaReal = (jugadores.indexOf(culpable) === partida.espiaIdx);
-        const espiaRealNombre = jugadores[partida.espiaIdx].nombre;
-        
+        const esEspia = (jugadores.indexOf(culpable) === partida.espiaIdx);
         document.getElementById('wanted-img').src = culpable.foto;
         document.getElementById('wanted-nombre').innerText = culpable.nombre;
+        const nombreEspia = jugadores[partida.espiaIdx].nombre;
         
-        let mensaje = esEspiaReal ? 
-            `<h2 style='color:var(--s)'>¡LO HABÉIS PILLADO! 🎉</h2><p>Efectivamente, ${culpable.nombre} era el espía.</p>` : 
-            `<h2 style='color:red'>¡HABÉIS FALLADO! 😱</h2><p>${culpable.nombre} era inocente. El espía real era <b>${espiaRealNombre}</b>.</p>`;
-        
-        document.getElementById('resultado-final').innerHTML = mensaje;
+        document.getElementById('resultado-final').innerHTML = esEspia ? 
+            "<h2>¡PILLADO! Era el espía 🕵️‍♂️</h2>" : 
+            `<h2>¡ERROR! Era inocente... 😱</h2><p>El espía era <b>${nombreEspia}</b></p>`;
         mostrar('s-wanted');
     }
 </script>
