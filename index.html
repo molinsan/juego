@@ -5,81 +5,312 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Espía en Jaén - Proyecto Andalucía</title>
     <style>
-        :root { --p: #2E7D32; --s: #81C784; --dark: #0b1a2a; --gold: #FFD700; --red: #d32f2f; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; overflow-x: hidden; }
-        .screen { display: none; min-height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-        .active { display: flex; }
-
-        /* Fondo Nocturno de Jaén */
-        #s1, #s-podio { 
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
-            url('https://images.unsplash.com/photo-1518107616385-ad308331e9ad?q=80&w=1000') center/cover; 
+        :root { 
+            --p: #2E7D32; /* Verde primario */
+            --s: #81C784; /* Verde secundario */
+            --dark: #0b1a2a; /* Fondo oscuro */
+            --gold: #FFD700; /* Oro */
+            --red: #d32f2f; /* Rojo de espía */
+            --paper: #f4e4bc; /* Color papel para WANTED */
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            background: var(--dark); 
+            color: white; 
+            overflow-x: hidden; 
+            display: flex; /* Para centrar el contenido verticalmente */
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .screen { 
+            display: none; 
+            flex: 1; /* Para que ocupe el espacio disponible */
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            box-sizing: border-box; 
+        }
+        .active { 
+            display: flex; 
         }
 
-        .card { background: white; color: #333; padding: 25px; border-radius: 30px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-        .btn { background: var(--p); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.2rem; font-weight: bold; width: 90%; cursor: pointer; margin: 10px 0; }
+        /* Fondo Nocturno de Jaén (Castillo de Santa Catalina, 22:13 PM) */
+        #s1, #s-podio-final { 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+            url('https://images.unsplash.com/photo-1518107616385-ad308331e9ad?q=80&w=1000') center/cover; 
+            background-size: cover;
+            background-position: center bottom; /* Ajustar para ver más castillo */
+        }
+
+        .card { 
+            background: white; 
+            color: #333; 
+            padding: 25px; 
+            border-radius: 30px; 
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+        }
+        .btn { 
+            background: var(--p); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            border-radius: 20px; 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+            width: 90%; 
+            cursor: pointer; 
+            margin: 10px 0; 
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
         
+        /* Cartel Wanted Clásico */
+        .wanted-card { 
+            background: var(--paper); 
+            color: #3d2b1f; 
+            padding: 20px; 
+            border: 4px solid #3d2b1f; 
+            border-radius: 10px; 
+            width: 250px; 
+            margin: 20px auto; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+            animation: fadeIn 0.5s ease-out;
+        }
+        .wanted-img { 
+            width: 180px; 
+            height: 180px; 
+            object-fit: cover; 
+            border: 2px solid #3d2b1f; 
+            filter: sepia(0.8) contrast(1.2); 
+            margin: 10px 0; 
+            border-radius: 5px;
+        }
+
         /* Animaciones del Regalo */
         @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        @keyframes shake { 0% { transform: rotate(0); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
-        .regalo-anim { font-size: 8rem; cursor: pointer; animation: bounce 1s infinite, shake 0.5s infinite; filter: drop-shadow(0 0 20px var(--gold)); margin: 20px 0; }
+        .regalo-anim { 
+            font-size: 7rem; 
+            cursor: pointer; 
+            animation: bounce 1s infinite; 
+            filter: drop-shadow(0 0 15px var(--gold)); 
+            margin: 20px 0; 
+        }
         
-        .aura-color { width: 140px; height: 140px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 15px auto; font-size: 5.5rem; border: 8px solid rgba(0,0,0,0.1); }
-        .perfil-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--s); object-fit: cover; background: #222; margin: 5px; }
+        /* Aura de color para la palabra */
+        .aura-color { 
+            width: 140px; 
+            height: 140px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 15px auto; 
+            font-size: 5.5rem; 
+            border: 8px solid rgba(0,0,0,0.1); 
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            animation: pulseColor 2s infinite alternate;
+        }
+        @keyframes pulseColor {
+            from { box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+            to { box-shadow: 0 0 25px rgba(255,255,255,0.4); }
+        }
+
+        /* Lista de jugadores en la pantalla inicial */
+        .perfil-img { 
+            width: 65px; 
+            height: 65px; 
+            border-radius: 50%; 
+            border: 3px solid var(--s); 
+            margin: 5px; 
+            object-fit: cover; 
+            background: #222; 
+        }
         
-        /* Podio Final y Lagarto */
-        .podio-cont { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0; }
-        .ganador-final { text-align: center; position: relative; }
-        .ganador-final img { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--gold); object-fit: cover; }
-        
-        .lagarto-escena { position: relative; width: 220px; height: 220px; margin: 40px auto; }
-        .lagarto-img { font-size: 7rem; position: absolute; top: -30px; left: 50%; transform: translateX(-50%); z-index: 2; }
-        .perdedor-img { width: 90px; height: 90px; border-radius: 50%; border: 5px solid var(--red); filter: grayscale(0.8) sepia(1) hue-rotate(-50deg); margin-top: 40px; }
+        /* Estilos para la imagen final del equipo */
+        #final-team-photo { 
+            background: rgba(0,0,0,0.5); /* Fondo oscuro semitransparente para contrastar */
+            border-radius: 20px; 
+            padding: 20px; 
+            margin-top: 20px;
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: flex-end; 
+            gap: 15px;
+            max-width: 90%; 
+            margin-left: auto; 
+            margin-right: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px); /* Efecto cristal */
+        }
+        .player-final { 
+            text-align: center; 
+            color: white; 
+            font-weight: bold; 
+            position: relative; 
+            margin-bottom: 20px; /* Espacio para los elementos */
+            animation: fadeIn 0.8s ease-out;
+        }
+        .player-final img { 
+            width: 90px; 
+            height: 90px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+            border: 4px solid #fff; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .player-final .trophy { 
+            font-size: 3rem; 
+            color: var(--gold); 
+            position: absolute; 
+            top: -20px; 
+            right: -10px; 
+            transform: rotate(-15deg);
+        }
+        .player-final .lagarto-abrazo { 
+            font-size: 3.5rem; /* Más grande para que destaque */
+            position: absolute; 
+            top: -20px; 
+            left: 50%; 
+            transform: translateX(-50%) rotate(10deg);
+            filter: drop-shadow(0 0 5px rgba(0,255,0,0.5));
+        }
+        .player-final .aceituna-regalo { 
+            font-size: 2rem; 
+            position: absolute; 
+            bottom: -10px; 
+            right: -5px; 
+            transform: rotate(20deg);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Botón de WhatsApp */
+        .btn-wa { 
+            background: #25D366; 
+            color: white; 
+            border: none; 
+            padding: 15px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            width: 90%; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(37,211,102,0.4);
+            transition: all 0.2s ease-in-out;
+        }
+        .btn-wa:active {
+            transform: scale(0.98);
+        }
+        .instruccion { 
+            font-size: 0.8rem; 
+            color: #ccc; 
+            margin-top: 10px; 
+            font-style: italic; 
+            max-width: 90%;
+        }
 
         /* Footer con tus datos */
-        .footer-datos { margin-top: 20px; font-size: 0.8rem; color: #888; border-top: 1px solid #333; padding-top: 10px; width: 100%; }
-        .footer-datos a { color: var(--s); text-decoration: none; font-weight: bold; }
+        .footer-datos { 
+            margin-top: auto; /* Para que se pegue abajo */
+            padding: 15px; 
+            font-size: 0.8rem; 
+            color: #777; 
+            border-top: 1px solid #333; 
+            background: rgba(0,0,0,0.3);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .footer-datos a { 
+            color: var(--s); 
+            text-decoration: none; 
+            font-weight: bold; 
+        }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
-    <div style="background: rgba(0,0,0,0.85); padding: 30px; border-radius: 40px; width: 90%; max-width: 450px; border: 2px solid var(--s);">
+    <div style="background: rgba(0,0,0,0.85); padding: 30px; border-radius: 40px; width: 95%; max-width: 450px; border: 2px solid var(--s);">
         <h1 style="color:var(--s); margin:0;">🕵️‍♂️ Espía en Jaén</h1>
-        <p style="color:var(--gold); font-size: 0.9rem; margin-top: 5px;">PROYECTO CIUDADES DE ANDALUCÍA</p>
+        <p style="color:var(--gold); font-size: 0.8rem; letter-spacing:1px;">PROYECTO CIUDADES DE ANDALUCÍA</p>
         
         <div id="lista-jugadores" style="display:flex; flex-wrap:wrap; justify-content:center; margin:15px 0;"></div>
         
-        <input type="text" id="in-nombre" placeholder="Escribe tu nombre..." style="padding:15px; border-radius:15px; width:85%; border:none; margin-bottom:15px; text-align:center; font-size:1.1rem;">
+        <input type="text" id="in-nombre" placeholder="Nombre del jugador..." style="padding:15px; border-radius:15px; width:85%; border:none; margin-bottom:10px; text-align:center; font-size:1.1rem;">
         
         <button class="btn" style="background:var(--s); color:black" onclick="abrirCamara()">📸 HACERSE SELFIE</button>
-        <button class="btn" onclick="iniciarJuego()" style="background:var(--gold); color:black;">🚀 EMPEZAR PARTIDA</button>
+        <button class="btn" onclick="iniciarJuego()" style="background:var(--gold); color:black;">🚀 JUGAR AHORA</button>
 
         <div class="footer-datos">
-            📧 <a href="mailto:molinsan.jl@gmail.com">molinsan.jl@gmail.com</a><br>
-            ☕ Apoyo: <a href="https://paypal.me/7moli" target="_blank">paypal.me/7moli</a>
+            📧 <a href="mailto:molinsan.jl@gmail.com">molinsan.jl@gmail.com</a> | ☕ <a href="https://paypal.me/7moli" target="_blank">paypal.me/7moli</a>
         </div>
     </div>
 </div>
 
 <div id="s-cam" class="screen">
-    <video id="camera-feed" style="width:100%; max-width:400px; transform:scaleX(-1); border-radius:30px; border: 4px solid var(--gold);" autoplay playsinline muted></video>
-    <button class="btn" onclick="tomarFoto()" style="height:80px; margin-top:30px; font-size:1.5rem;">📸 ¡DISPARAR!</button>
+    <video id="camera-feed" style="width:100%; max-width:400px; transform:scaleX(-1); border-radius:20px; border: 4px solid var(--gold);" autoplay playsinline muted></video>
+    <button class="btn" onclick="tomarFoto()">📸 CAPTURAR</button>
 </div>
 
 <div id="s-game" class="screen"></div>
 
+<div id="s-podio-final" class="screen">
+    <h1 style="color:var(--gold)">🎉 EQUIPO JAÉN FINAL 🎉</h1>
+    <div id="final-team-photo"></div>
+    
+    <button class="btn-wa" onclick="compartirWhatsApp()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/1024px-WhatsApp.svg.png" style="width:24px; height:24px;">
+        <span>Compartir Victoria por WhatsApp</span>
+    </button>
+    <p class="instruccion">Pista: Mantén pulsada la foto para guardarla y enviarla manualmente 📸</p>
+
+    <button class="btn" onclick="location.reload()" style="margin-top:20px;">🎮 NUEVA PARTIDA</button>
+    
+    <div class="footer-datos">
+        📧 <a href="mailto:molinsan.jl@gmail.com">molinsan.jl@gmail.com</a> | ☕ <a href="https://paypal.me/7moli" target="_blank">paypal.me/7moli</a>
+    </div>
+</div>
+
 <script>
     const db = [
-        {p:"ACEITUNA", e:"🫒", c:"#558b2f"}, {p:"SOL", e:"☀️", c:"#ffeb3b"},
-        {p:"LAGARTO", e:"🦎", c:"#81c784"}, {p:"BOMBERO", e:"👨‍🚒", c:"#f44336"},
-        {p:"POLICÍA", e:"👮‍♂️", c:"#1a237e"}, {p:"MANZANA", e:"🍎", c:"#ff5252"},
-        {p:"CATEDRAL", e:"⛪", c:"#ffe082"}, {p:"CASTILLO", e:"🏰", c:"#8d6e63"}
+        {p:"ACEITUNA", e:"🫒", c:"#558b2f"}, 
+        {p:"SOL", e:"☀️", c:"#ffeb3b"},
+        {p:"LAGARTO", e:"🦎", c:"#81c784"}, 
+        {p:"CATEDRAL", e:"⛪", c:"#ffe082"},
+        {p:"CASTILLO", e:"🏰", c:"#8d6e63"},
+        {p:"GUITARRA", e:"🎸", c:"#d81b60"},
+        {p:"FLAMENCO", e:"💃", c:"#f06292"},
+        {p:"TAPAS", e:"🍻", c:"#ffb300"},
+        {p:"RÍO", e:"🌊", c:"#2196f3"},
+        {p:"MONTAÑA", e:"⛰️", c:"#795548"},
+        {p:"LIBRO", e:"📚", c:"#7e57c2"},
+        {p:"TELÉFONO", e:"📱", c:"#607d8b"},
+        {p:"PIZZA", e:"🍕", c:"#ffc107"},
+        {p:"BALÓN", e:"⚽", c:"#e0e0e0"},
+        {p:"OSO", e:"🐻", c:"#8d6e63"},
+        {p:"BARCO", e:"🚢", c:"#4dd0e1"}
     ];
 
     let jugadores = [];
     let partida = {};
+    let historialPalabras = []; // Para evitar repeticiones recientes
     let streamMedia;
+    const URL_JUEGO = "https://tu-enlace-del-juego.com"; // ¡IMPORTANTE! Actualiza esto con la URL real de tu juego
 
     function mostrar(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -87,21 +318,25 @@
     }
 
     async function abrirCamara() {
-        if(!document.getElementById('in-nombre').value) return alert("Pon tu nombre");
+        if(!document.getElementById('in-nombre').value) return alert("Por favor, escribe tu nombre primero.");
         try {
             streamMedia = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
             document.getElementById('camera-feed').srcObject = streamMedia;
             mostrar('s-cam');
-        } catch(e) { alert("Acceso a cámara denegado o no disponible."); }
+        } catch(e) { 
+            alert("Acceso a la cámara denegado o no disponible. Asegúrate de que tu navegador tiene permisos."); 
+        }
     }
 
     function tomarFoto() {
         const v = document.getElementById('camera-feed');
         const c = document.createElement('canvas');
-        c.width = 400; c.height = 400;
+        c.width = 400; 
+        c.height = 400;
         const ctx = c.getContext('2d');
-        ctx.translate(400, 0); ctx.scale(-1, 1);
-        ctx.drawImage(v, 0, 0, 400, 400);
+        ctx.translate(400,0); 
+        ctx.scale(-1,1); // Efecto espejo
+        ctx.drawImage(v,0,0,400,400);
         
         jugadores.push({ 
             nombre: document.getElementById('in-nombre').value.toUpperCase(), 
@@ -112,20 +347,31 @@
 
         if(streamMedia) streamMedia.getTracks().forEach(t => t.stop());
         document.getElementById('in-nombre').value = "";
-        actualizarLista(); 
+        actualizarListaJugadores(); 
         mostrar('s1');
     }
 
-    function actualizarLista() {
-        document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `<img src="${j.foto}" class="perfil-img">`).join('');
+    function actualizarListaJugadores() {
+        document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `<img src="${j.foto}" class="perfil-img" alt="${j.nombre}">`).join('');
     }
 
     function iniciarJuego() {
-        if(jugadores.length < 3) return alert("Mínimo 3 jugadores");
-        partida = {
-            obj: db[Math.floor(Math.random()*db.length)],
-            espiaIdx: Math.floor(Math.random()*jugadores.length),
-            turno: 0, vIdx: 0
+        if(jugadores.length < 3) return alert("Necesitas al menos 3 jugadores para empezar la partida.");
+
+        let palabrasDisponibles = db.filter(p => !historialPalabras.includes(p.p));
+        if(palabrasDisponibles.length === 0) { // Si se acaban las palabras, reseteamos el historial
+            historialPalabras = [];
+            palabrasDisponibles = db;
+        }
+
+        const palabraElegida = palabrasDisponibles[Math.floor(Math.random()*palabrasDisponibles.length)];
+        historialPalabras.push(palabraElegida.p); // Añadir al historial
+
+        partida = { 
+            obj: palabraElegida, 
+            espiaIdx: Math.floor(Math.random()*jugadores.length), 
+            turno: 0, 
+            vIdx: 0 
         };
         mostrar('s-game'); 
         prepararTurno();
@@ -134,109 +380,147 @@
     function prepararTurno() {
         const j = jugadores[partida.turno];
         document.getElementById('s-game').innerHTML = `
-            <div class="card" onclick="revelar()">
-                <h1 style="color:var(--p)">${j.nombre}</h1>
+            <div class="card" onclick="revelarRol()">
+                <h1 style="color:var(--p)">¡Atención, ${j.nombre}!</h1>
                 <div style="font-size:5rem; margin:20px 0;">🕵️‍♂️</div>
-                <p>TOCA PARA VER TU SECRETO</p>
+                <p>Toca la tarjeta para ver tu misión secreta.</p>
             </div>`;
     }
 
-    function revelar() {
-        const esE = (partida.turno === partida.espiaIdx);
+    function revelarRol() {
+        const esEspia = (partida.turno === partida.espiaIdx);
         const j = jugadores[partida.turno];
-        let icono = esE ? "❓" : partida.obj.e;
+        let iconoRol = esEspia ? "❓" : partida.obj.e;
         
-        // Personalización para Hache y Jota
-        if(esE && j.nombre.includes("HACHE")) icono = "👮‍♂️";
-        if(esE && j.nombre.includes("JOTA")) icono = "👨‍🚒";
-
         document.getElementById('s-game').innerHTML = `
-            <div class="card" style="border: 8px solid ${esE ? 'var(--red)' : 'var(--p)'}">
-                <div class="aura-color" style="background:${esE ? '#444' : partida.obj.c}">${icono}</div>
-                <h2>${esE ? "¡ERES EL ESPÍA!" : partida.obj.p}</h2>
-                <p>${esE ? "¡Finge que sabes la palabra!" : "¡Que no te pillen!"}</p>
-                <button class="btn" onclick="sigTurno()">LISTO ✅</button>
+            <div class="card" style="border: 8px solid ${esEspia ? 'var(--red)' : 'var(--p)'}; animation: fadeIn 0.5s ease-out;">
+                <div style="background:${esEspia ? '#444' : partida.obj.c};" class="aura-color">${iconoRol}</div>
+                <h2>${esEspia ? "¡ERES EL ESPÍA SECRETO!" : partida.obj.p}</h2>
+                <p>${esEspia ? "¡No dejes que te descubran y averigua la palabra!" : "¡Sé discreto, el espía está entre vosotros!"}</p>
+                <button class="btn" onclick="siguienteTurno()">¡Entendido!</button>
             </div>`;
     }
 
-    function sigTurno() {
+    function siguienteTurno() {
         partida.turno++;
         if(partida.turno < jugadores.length) prepararTurno();
-        else { partida.vIdx = 0; lanzarVoto(); }
+        else { 
+            partida.vIdx = 0; // Reiniciar índice para la votación
+            lanzarVotacion(); 
+        }
     }
 
-    function lanzarVoto() {
+    function lanzarVotacion() {
         const votante = jugadores[partida.vIdx];
-        let btns = jugadores.map((s, idx) => idx !== partida.vIdx ? `<button class="btn" onclick="votar(${idx})">${s.nombre}</button>` : "").join('');
+        let botonesVoto = jugadores.map((jug, idx) => 
+            idx !== partida.vIdx ? `<button class="btn" onclick="votar('${idx}')">${jug.nombre}</button>` : ""
+        ).join('');
         document.getElementById('s-game').innerHTML = `
             <div class="card">
-                <h2>${votante.nombre}</h2>
-                <p>¿Quién crees que es el espía?</p>
-                <div style="max-height:300px; overflow-y:auto;">${btns}</div>
+                <h2>${votante.nombre}, ¿quién es el espía?</h2>
+                <p>Selecciona al culpable:</p>
+                <div style="max-height:300px; overflow-y:auto;">${botonesVoto}</div>
             </div>`;
     }
 
-    function votar(idx) {
-        jugadores[idx].votos++;
+    function votar(indiceVotado) {
+        jugadores[indiceVotado].votos++;
         partida.vIdx++;
-        if(partida.vIdx < jugadores.length) lanzarVoto();
-        else finalizarRonda();
+        if(partida.vIdx < jugadores.length) lanzarVotacion();
+        else mostrarCartelWanted();
     }
 
-    function finalizarRonda() {
-        const culpable = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
-        const esE = (jugadores.indexOf(culpable) === partida.espiaIdx);
-        
-        if(esE) jugadores.forEach((j,i) => { if(i!==partida.espiaIdx) j.puntos+=10; });
-        else jugadores[partida.espiaIdx].puntos+=20;
-
+    function mostrarCartelWanted() {
+        const masVotado = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
         document.getElementById('s-game').innerHTML = `
-            <div id="regalo-seccion" style="text-align:center;">
-                <h1 style="color:var(--gold)">¡MIRA TU REGALO!</h1>
-                <div class="regalo-anim" onclick="abrirRegalo()">🎁</div>
-                <p>TOCA PARA VER EL RESULTADO FINAL</p>
+            <div class="wanted-card">
+                <h2 style="margin:0; font-family:serif;">¡SE BUSCA!</h2>
+                <img src="${masVotado.foto}" class="wanted-img" alt="Foto de ${masVotado.nombre}">
+                <h3 style="margin:0;">${masVotado.nombre}</h3>
+                <p style="font-size:0.9rem; margin-top:10px;">¡El más votado por el equipo!</p>
             </div>
-            <div id="podio-seccion" style="display:none; width:100%;">
-                ${generarPodioHTML()}
-            </div>`;
-    }
-
-    function generarPodioHTML() {
-        const max = Math.max(...jugadores.map(j => j.puntos));
-        const min = Math.min(...jugadores.map(j => j.puntos));
-        const campeones = jugadores.filter(j => j.puntos === max);
-        const perdedor = jugadores.find(j => j.puntos === min);
-
-        return `
-            <h1 style="color:var(--gold); margin-bottom:0;">🏆 PODIO DE BAILÉN</h1>
-            <div class="podio-cont">
-                ${campeones.map(c => `
-                    <div class="ganador-final">
-                        <div style="font-size:2.5rem;">🥇</div>
-                        <img src="${c.foto}">
-                        <div style="background:var(--gold); color:black; font-weight:bold; border-radius:10px; padding:2px 10px;">${c.nombre}</div>
-                    </div>
-                `).join('')}
-            </div>
-            <div class="lagarto-escena">
-                <div class="lagarto-img">🦎</div>
-                <img src="${perdedor.foto}" class="perdedor-img">
-                <div style="color:var(--red); font-weight:bold; background:rgba(0,0,0,0.7); border-radius:10px; padding:10px; margin-top:10px;">
-                    ¡EL LAGARTO DE JAÉN <br> SE COMIÓ A ${perdedor.nombre}!
-                </div>
-            </div>
-            <button class="btn" onclick="reiniciarPuntos()">OTRA RONDA 🔄</button>
-            <button class="btn" style="background:#444" onclick="location.reload()">NUEVA PARTIDA</button>
+            <button class="btn" onclick="evaluarRonda()" style="background:var(--gold); color:black;">💰 REVELAR LA VERDAD</button>
         `;
     }
 
-    function abrirRegalo() {
-        document.getElementById('regalo-seccion').style.display = 'none';
-        document.getElementById('podio-seccion').style.display = 'block';
+    function evaluarRonda() {
+        const masVotado = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
+        const fueEspia = (jugadores.indexOf(masVotado) === partida.espiaIdx);
+        
+        if(fueEspia) { // Espía cazado
+            jugadores.forEach((j,i) => { if(i!==partida.espiaIdx) j.puntos+=10; }); // Inocentes ganan
+            alert(`¡El espía era ${masVotado.nombre}! Los inocentes ganan +10 puntos.`);
+        } else { // Espía se escapa
+            jugadores[partida.espiaIdx].puntos+=20; // Espía gana
+            alert(`¡${masVotado.nombre} era inocente! El espía se escapó y gana +20 puntos.`);
+        }
+        
+        document.getElementById('s-game').innerHTML = `
+            <h1 style="color:var(--gold)">¡Ronda Finalizada!</h1>
+            <div class="regalo-anim" onclick="accederRegaloFinal()">🎁</div>
+            <p>Acceder al Regalo y Finalizar Partida</p>
+        `;
+    }
+
+    function accederRegaloFinal() {
+        mostrar('s-podio-final');
+        generarFotoEquipoFinal();
+    }
+
+    function generarFotoEquipoFinal() {
+        const maxPuntos = Math.max(...jugadores.map(j => j.puntos));
+        const campeones = jugadores.filter(j => j.puntos === maxPuntos);
+        const perdedor = jugadores.reduce((prev, curr) => (prev.puntos < curr.puntos ? prev : curr)); // El que tiene menos puntos
+
+        let fotoHTML = '';
+        jugadores.forEach(j => {
+            let elementoExtra = '';
+            if (j === perdedor) {
+                // Perdedor abrazado con el Lagarto de Jaén
+                elementoExtra = `<span class="lagarto-abrazo">🦎</span>`; 
+            } else if (campeones.includes(j)) {
+                // Campeón con trofeo
+                elementoExtra = `<span class="trophy">🏆</span>`;
+            } else {
+                // Participante con regalo de aceitunas
+                elementoExtra = `<span class="aceituna-regalo">🫒</span>`;
+            }
+
+            fotoHTML += `
+                <div class="player-final">
+                    <img src="${j.foto}" alt="${j.nombre}">
+                    ${elementoExtra}
+                    <div style="margin-top:5px;">${j.nombre}</div>
+                    <div style="font-size:0.8rem; color:var(--s);">Puntos: ${j.puntos}</div>
+                </div>
+            `;
+        });
+        document.getElementById('final-team-photo').innerHTML = fotoHTML;
+    }
+
+    function compartirWhatsApp() {
+        const maxPuntos = Math.max(...jugadores.map(j => j.puntos));
+        const campeonesNombres = jugadores.filter(j => j.puntos === maxPuntos).map(c => c.nombre).join(", ");
+        const perdedorNombre = jugadores.reduce((prev, curr) => (prev.puntos < curr.puntos ? prev : curr)).nombre;
+        
+        const textoCompartir = `🕵️‍♂️ ¡Acabamos de jugar a "Un Espía en Jaén"! 🕵️‍♀️\n\n` +
+                               `🏆 Campeones: ${campeonesNombres}\n` +
+                               `🦎 ¡El Lagarto de Jaén se ha comido a ${perdedorNombre}! 😂\n\n` +
+                               `¿Te atreves a jugar con nosotros? ¡Pruébalo aquí:\n` +
+                               `${URL_JUEGO}\n\n` +
+                               `¡Un Proyecto de Ciudades de Andalucía! 🫒`;
+
+        const urlWA = `https://api.whatsapp.com/send?text=${encodeURIComponent(textoCompartir)}`;
+        window.open(urlWA, '_blank');
     }
 
     function reiniciarPuntos() {
-        jugadores.forEach(j => { j.votos = 0; });
+        // Esta función no se usa directamente en el flujo final, pero se podría usar para "Jugar otra ronda"
+        jugadores.forEach(j => { 
+            j.votos = 0; 
+            j.puntos = 0; // Reiniciar puntos para una nueva partida si se desea
+        });
+        historialPalabras = []; // También reiniciar el historial de palabras
         iniciarJuego();
     }
 </script>
