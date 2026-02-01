@@ -3,137 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espía en Jaén - Selección de Nivel</title>
+    <title>Espía en Jaén - Edición 2026</title>
     <style>
         :root { 
             --p: #2E7D32; --s: #81C784; --gold: #FFD700; --red: #d32f2f; 
-            --dark: #0b1a2a; --wsp: #25D366;
+            --dark: #0b1a2a; --wsp: #25D366; --paper: #f4e4bc;
         }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; }
         .screen { display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; min-height: 100vh; box-sizing: border-box; }
         .active { display: flex; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: white; color: #333; padding: 25px; border-radius: 30px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .btn { border: none; padding: 16px; border-radius: 15px; font-size: 1rem; font-weight: bold; width: 95%; cursor: pointer; margin: 8px 0; color: white; transition: 0.3s; }
+        .card { background: white; color: #333; padding: 20px; border-radius: 25px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn { border: none; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: bold; width: 95%; cursor: pointer; margin: 5px 0; color: white; }
         
-        /* CATEGORÍAS ÚNICAS */
-        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .cat-btn { background: #444; padding: 15px 10px; border-radius: 15px; font-size: 0.85rem; border: 3px solid transparent; cursor: pointer; color: white; display: flex; flex-direction: column; gap: 5px; }
-        .cat-btn.selected { border-color: var(--gold); background: var(--p); transform: scale(1.05); }
+        /* RETOS TACHABLES */
+        .grid-retos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 15px 0; }
+        .reto-item { background: #eee; padding: 10px; border-radius: 12px; color: #333; cursor: pointer; font-size: 0.8rem; position: relative; border: 2px solid transparent; }
+        .reto-item.selected { border-color: var(--p); background: var(--s); color: white; }
+        .reto-item:not(.selected)::after { content: "✕"; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(211,47,47,0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; border-radius: 10px; }
 
-        .avatar-preview { width: 50px; height: 50px; border-radius: 10px; margin: 5px; border: 2px solid var(--s); background: white; }
-        .cromo-pro { background: rgba(255,255,255,0.05); border: 2px solid var(--gold); border-radius: 15px; padding: 12px; width: 140px; margin: 8px; position: relative; }
-        .cromo-img { width: 100%; height: 110px; object-fit: contain; border-radius: 10px; background: white; }
-        .acc-icon { position: absolute; top: -10px; left: -10px; font-size: 2.2rem; z-index: 5; }
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+        .cat-btn { background: #444; padding: 10px; border-radius: 12px; font-size: 0.75rem; border: 2px solid transparent; cursor: pointer; color: white; }
+        .cat-btn.selected { border-color: var(--gold); background: var(--p); }
+
+        .avatar-preview { width: 45px; height: 45px; border-radius: 50%; margin: 3px; border: 2px solid var(--gold); object-fit: cover; background: white; }
+        .cromo-pro { background: rgba(255,255,255,0.05); border: 2px solid var(--gold); border-radius: 15px; padding: 10px; width: 130px; margin: 5px; position: relative; color: white; }
+        .cromo-img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; background: white; }
+        .acc-icon { position: absolute; top: -8px; left: -8px; font-size: 2rem; z-index: 5; }
         
-        footer { font-size: 0.7rem; padding: 20px; background: rgba(0,0,0,0.9); width: 100%; border-top: 2px solid var(--gold); }
+        footer { font-size: 0.7rem; padding: 15px; background: rgba(0,0,0,0.9); width: 100%; border-top: 2px solid var(--gold); }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
-    <div style="background: rgba(0,0,0,0.7); padding: 25px; border-radius: 40px; border: 2px solid var(--s); width: 90%; max-width: 450px;">
+    <div style="background: rgba(0,0,0,0.8); padding: 20px; border-radius: 30px; border: 2px solid var(--s); width: 95%; max-width: 420px;">
         <h1>🕵️‍♂️ Espía en Jaén</h1>
-        <div id="lista-previa" style="display:flex; justify-content:center; flex-wrap:wrap; margin-bottom:10px;"></div>
-        
-        <input type="text" id="in-nombre" placeholder="Tu nombre..." style="padding:15px; border-radius:15px; width:85%; margin:5px 0; border:none; text-align: center;">
+        <div id="lista-previa" style="display:flex; justify-content:center; flex-wrap:wrap;"></div>
+        <input type="text" id="in-nombre" placeholder="Nombre (Pe, Hache, Jota...)" style="padding:12px; border-radius:10px; width:85%; margin:10px 0; border:none; text-align: center;">
 
-        <p style="margin: 15px 0 5px;">📍 Selecciona Nivel (Único):</p>
         <div class="cat-grid">
-            <div class="cat-btn selected" id="c-infantil" onclick="setCat('infantil')"><span>👶 Infantil</span><small>(3-7 años)</small></div>
-            <div class="cat-btn" id="c-juvenil" onclick="setCat('juvenil')"><span>🎮 Juvenil</span><small>(8-12 años)</small></div>
-            <div class="cat-btn" id="c-adolescente" onclick="setCat('adolescente')"><span>📱 Adolescente</span><small>(13-17 años)</small></div>
-            <div class="cat-btn" id="c-plus" onclick="setCat('plus')"><span>🍻 +18</span><small>(Adultos)</small></div>
+            <div class="cat-btn selected" id="c-infantil" onclick="setCat('infantil')">👶 Infantil (3-7)</div>
+            <div class="cat-btn" id="c-juvenil" onclick="setCat('juvenil')">🎮 Juvenil (8-12)</div>
+            <div class="cat-btn" id="c-adolescente" onclick="setCat('adolescente')">📱 Adolescente (13-17)</div>
+            <div class="cat-btn" id="c-plus" onclick="setCat('plus')">🍻 +18 (Adultos)</div>
         </div>
 
-        <button class="btn" style="background:var(--p);" onclick="usarAvatar()">👤 AÑADIR JUGADOR</button>
-        <button class="btn" id="btn-next" style="display:none; background:var(--gold); color:black;" onclick="mostrar('s-game-start')">SIGUIENTE 🚀</button>
+        <button class="btn" style="background:var(--p);" onclick="iniciarCamara()">📸 SELFIE</button>
+        <button class="btn" style="background:#666;" onclick="usarAvatar()">👤 AVATAR</button>
+        <button class="btn" id="btn-next" style="display:none; background:var(--gold); color:black;" onclick="mostrar('s-retos')">CONFIGURAR RETOS 🚀</button>
     </div>
 </div>
 
-<div id="s-game-start" class="screen">
+<div id="s-cam" class="screen" style="background:black;">
+    <video id="v" style="width:100%; max-width:400px; transform: scaleX(-1);" autoplay playsinline></video>
+    <button class="btn" onclick="capturarFoto()" style="background:white; color:black; border-radius:50%; width:70px; height:70px; font-size:2rem;">📸</button>
+</div>
+
+<div id="s-retos" class="screen">
     <div class="card">
-        <h3>🚀 ¡Preparados!</h3>
-        <p id="info-nivel" style="font-weight: bold; color: var(--p);"></p>
-        <p>Pasad el móvil en orden para ver vuestro rol secreto.</p>
-        <button class="btn" style="background:var(--p)" onclick="comenzarPartida()">¡EMPEZAR JUEGO!</button>
+        <h3>🎯 Configura los Retos</h3>
+        <p style="font-size:0.8rem">Toca para desactivar los que no quieras usar.</p>
+        <div class="grid-retos" id="grid-retos"></div>
+        <button class="btn" style="background:var(--p)" onclick="comenzarPartida()">¡EMPEZAR RONDA!</button>
     </div>
 </div>
 
 <div id="s-game" class="screen"></div>
 
 <div id="s-podio" class="screen">
-    <h1 style="color:var(--gold);">👑 PODIO DE JAÉN</h1>
-    <div id="final-team-photo" style="display:flex; flex-wrap:wrap; justify-content:center; width:100%;"></div>
-    <button class="btn" style="background:var(--wsp); width:auto; padding: 15px 40px;" onclick="location.reload()">REINICIAR</button>
+    <h1 id="titulo-podio" style="color:var(--gold);">🏅 RESULTADOS</h1>
+    <div id="ranking-list" style="display:flex; flex-wrap:wrap; justify-content:center; width:100%;"></div>
+    
+    <div id="controles-final" style="margin-top:20px; width: 100%; max-width: 400px;">
+        <button class="btn" style="background:var(--p)" onclick="comenzarPartida()">🔄 OTRA RONDA</button>
+        <button class="btn" style="background:var(--red)" onclick="finalizarProyecto()">🏁 FINALIZAR PROYECTO</button>
+        <div id="div-wsp" style="display:none;">
+            <button class="btn" style="background:var(--wsp)" onclick="compartirWsp()">📲 COMPARTIR EN WHATSAPP</button>
+            <button class="btn" style="background:white; color:black;" onclick="location.reload()">REINICIAR TODO</button>
+        </div>
+    </div>
 </div>
 
 <footer>
     <p>Proyecto Ciudades de Andalucía - Jaén</p>
-    <p>Jaén Capital · Linares · Andújar · Úbeda · Baeza · Alcalá la Real</p>
 </footer>
 
 <script>
-    const niveles = {
-        infantil: {
-            desc: "Nivel Niños (3-7): Palabras fáciles con pistas visuales.",
-            retos: [{t:"MÍMICA",i:"🤸"}, {t:"SONIDOS",i:"🐶"}, {t:"BAILE",i:"💃"}],
-            palabras: [{p:"PERRO", e:"🐶", s:"🐱"}, {p:"BOMBERO", e:"🚒", s:"👮"}, {p:"SOL", e:"☀️", s:"🌙"}]
-        },
-        juvenil: {
-            desc: "Nivel Juvenil (8-12): Retos de ingenio y cultura.",
-            retos: [{t:"DIBUJO",i:"🎨"}, {t:"MÍMICA",i:"🎭"}, {t:"TARAREAR",i:"🎵"}],
-            palabras: [{p:"OLIVAR", e:"🌳"}, {p:"CASTILLO", e:"🏰"}, {p:"FÚTBOL", e:"⚽"}]
-        },
-        adolescente: {
-            desc: "Nivel Adolescente (13-17): Redes sociales y moda.",
-            retos: [{t:"POSE TIKTOK",i:"🤳"}, {t:"RAPEAR",i:"🎤"}, {t:"MÍMICA",i:"🕺"}],
-            palabras: [{p:"INFLUENCER", e:"📸"}, {p:"VIRAL", e:"🚀"}, {p:"STREAMER", e:"🎙️"}]
-        },
-        plus: {
-            desc: "Nivel +18: Conceptos complejos y cultura local.",
-            retos: [{t:"CHISTE",i:"😂"}, {t:"ACTUAR",i:"🎬"}, {t:"DEFINICIÓN",i:"📖"}],
-            palabras: [{p:"TAPEO", e:"🍺"}, {p:"RENACIMIENTO", e:"🏛️"}, {p:"COSECHA", e:"🚜"}]
-        }
-    };
-
-    const pueblosJaen = [
-        {n:"Jaén Capital", c:"Tiene la única Catedral de España que sirvió de modelo para las de América."},
-        {n:"Linares", c:"Es la cuna del cante de las minas y del ajedrez mundial."},
-        {n:"Andújar", c:"En su sierra vive el Lince Ibérico, el felino más amenazado del mundo."},
-        {n:"Úbeda", c:"Se la conoce como la 'Ciudad del Oro Verde' por su aceite y su arquitectura."},
-        {n:"Baeza", c:"Aquí el poeta Antonio Machado fue profesor de francés muchos años."},
-        {n:"Alcalá la Real", c:"Su Fortaleza de la Mota era la llave de entrada al antiguo Reino de Granada."}
+    const poolRetos = [
+        {t:"MÍMICA",i:"🤸"}, {t:"SONIDOS",i:"🐶"}, {t:"DIBUJO",i:"🎨"}, 
+        {t:"BAILE",i:"💃"}, {t:"ESTATUA",i:"🗿"}, {t:"TARAREAR",i:"🎤"},
+        {t:"UNA PALABRA",i:"☝️"}, {t:"ACENTO",i:"🗣️"}, {t:"CÁMARA LENTA",i:"🐢"}, {t:"VERSO",i:"📜"}
     ];
 
-    let jugadores = [], categoria = 'infantil', partida = {};
+    const pueblosJaen = [
+        {n:"Bailén", c:"¡Ciudad Heroica! Famosa por la batalla de 1808."},
+        {n:"Jaén", c:"Posee la única Catedral que es modelo para América."},
+        {n:"Úbeda", c:"Corazón del Renacimiento y del aceite de oliva."},
+        {n:"Andújar", c:"Hogar del lince ibérico y de la Virgen de la Cabeza."},
+        {n:"Linares", c:"Ciudad minera y cuna de grandes artistas como Raphael."},
+        {n:"Baeza", c:"Lugar donde Machado soñaba entre olivos."}
+    ];
+
+    const palabrasNiveles = {
+        infantil: [{p:"ELEFANTE", e:"🐘", s:"Mamut"}, {p:"BOMBERO", e:"🚒", s:"Policía"}, {p:"GATO", e:"🐱", s:"Tigre"}],
+        juvenil: [{p:"OLIVAR", e:"🌳"}, {p:"CASTILLO", e:"🏰"}, {p:"YOUTUBER", e:"🤳"}],
+        adolescente: [{p:"TIKTOK", e:"📱"}, {p:"GHOSTING", e:"👻"}, {p:"FLOW", e:"🔥"}],
+        plus: [{p:"TAPEO", e:"🍺"}, {p:"COSECHA", e:"🚜"}, {p:"REVOLUCIÓN", e:"✊"}]
+    };
+
+    let jugadores = [], categoria = 'infantil', stream, partida = {};
+    let retosSeleccionados = poolRetos.map((_, i) => i);
+
+    // Render Retos
+    const gridR = document.getElementById('grid-retos');
+    poolRetos.forEach((r, i) => {
+        gridR.innerHTML += `<div class="reto-item selected" id="ri-${i}" onclick="toggleReto(${i})">${r.i} ${r.t}</div>`;
+    });
+
+    function toggleReto(i) {
+        const idx = retosSeleccionados.indexOf(i);
+        if (idx > -1) {
+            if(retosSeleccionados.length <= 3) return alert("Mínimo 3 retos activos");
+            retosSeleccionados.splice(idx, 1);
+            document.getElementById(`ri-${i}`).classList.remove('selected');
+        } else {
+            retosSeleccionados.push(i);
+            document.getElementById(`ri-${i}`).classList.add('selected');
+        }
+    }
 
     function setCat(c) {
         categoria = c;
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
         document.getElementById('c-'+c).classList.add('selected');
-        document.getElementById('info-nivel').innerText = niveles[c].desc;
+    }
+
+    async function iniciarCamara(){
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+            document.getElementById('v').srcObject = stream;
+            mostrar('s-cam');
+        } catch(e){ alert("Usa Avatar"); }
+    }
+
+    function capturarFoto(){
+        const v=document.getElementById('v'), c=document.createElement('canvas');
+        c.width=400; c.height=400;
+        const ctx=c.getContext('2d'); ctx.translate(400,0); ctx.scale(-1,1); ctx.drawImage(v,0,0,400,400);
+        addJugador(c.toDataURL());
+        if(stream) stream.getTracks().forEach(t=>t.stop());
+        mostrar('s1');
     }
 
     function usarAvatar() {
-        const rawN = document.getElementById('in-nombre').value.trim().toUpperCase();
-        const n = rawN || "AGENTE "+(jugadores.length+1);
-        let acc = ""; 
-        if(n.includes("PE")) acc="🌈"; 
-        else if(n.includes("HACHE")) acc="👮"; 
-        else if(n.includes("JOTA")) acc="👨‍🚒";
-
-        // Crear avatar simple con color aleatorio
-        const color = `hsl(${Math.random()*360}, 70%, 80%)`;
         const c = document.createElement('canvas'); c.width=200; c.height=200;
-        const ctx = c.getContext('2d');
-        ctx.fillStyle = color; ctx.fillRect(0,0,200,200);
-        ctx.font = "100px Arial"; ctx.textAlign="center"; ctx.textBaseline="middle";
-        ctx.fillText(n[0], 100, 110);
+        const ctx = c.getContext('2d'); ctx.fillStyle = `hsl(${Math.random()*360},70%,80%)`;
+        ctx.fillRect(0,0,200,200); addJugador(c.toDataURL());
+    }
 
-        jugadores.push({nombre:n, foto:c.toDataURL(), puntos:0, medallas:[], acc});
-        document.getElementById('lista-previa').innerHTML += `<img src="${c.toDataURL()}" class="avatar-preview" style="border-color:${color}">`;
+    function addJugador(img) {
+        const n = document.getElementById('in-nombre').value.trim().toUpperCase() || "JUGADOR "+(jugadores.length+1);
+        let acc = ""; 
+        if(n.includes("PE")) acc="🌈"; else if(n.includes("HACHE")) acc="👮"; else if(n.includes("JOTA")) acc="👨‍🚒";
+        jugadores.push({nombre:n, foto:img, puntos:0, medallas:[], acc});
+        document.getElementById('lista-previa').innerHTML += `<img src="${img}" class="avatar-preview">`;
         document.getElementById('in-nombre').value = "";
         if(jugadores.length >= 3) document.getElementById('btn-next').style.display="block";
     }
@@ -144,14 +179,22 @@
     }
 
     function comenzarPartida() {
-        const config = niveles[categoria];
-        const pObj = config.palabras[Math.floor(Math.random()*config.palabras.length)];
+        const lista = palabrasNiveles[categoria];
+        const pObj = lista[Math.floor(Math.random()*lista.length)];
+        
+        // Mezclar retos y asignar diferentes
+        let retosRonda = [...retosSeleccionados].sort(() => Math.random() - 0.5);
+        
         partida = { 
             palabra: pObj, 
             espiaIdx: Math.floor(Math.random()*jugadores.length), 
             turno: 0 
         };
-        jugadores.forEach(j => j.reto = config.retos[Math.floor(Math.random()*config.retos.length)]);
+
+        jugadores.forEach((j, i) => {
+            j.retoActual = poolRetos[retosRonda[i % retosRonda.length]];
+        });
+
         verTurno();
     }
 
@@ -160,28 +203,25 @@
         const j = jugadores[partida.turno];
         document.getElementById('s-game').innerHTML = `
             <div class="card" onclick="revelar()">
-                <h1 style="font-size:3rem;">${j.acc || '🕵️'}</h1>
-                <h2>Turno de: ${j.nombre}</h2>
+                <h1>${j.acc || '🕵️'}</h1>
+                <h2>${j.nombre}</h2>
                 <p>TOCA PARA VER TU SECRETO</p>
             </div>`;
     }
 
     function revelar() {
-        const j = jugadores[partida.turno];
-        const esE = (partida.turno === partida.espiaIdx);
-        let html = esE ? `<h2 style="color:var(--red)">¡ERES EL ESPÍA!</h2>` : `<h2>PALABRA:<br>${partida.palabra.p} ${partida.palabra.e}</h2>`;
-        
-        if(esE && categoria === 'infantil') {
-            html += `<p>Pista: Es parecido a un/a <b>${partida.palabra.s}</b></p>`;
-        }
+        const j = jugadores[partida.turno], esE = (partida.turno === partida.espiaIdx);
+        let txt = esE ? `<h2 style="color:var(--red)">¡ERES EL ESPÍA!</h2>` : `<h2>PALABRA: ${partida.palabra.p} ${partida.palabra.e}</h2>`;
+        if(esE && categoria === 'infantil') txt += `<p>Pista: Es parecido a un/a <b>${partida.palabra.s}</b></p>`;
 
         document.getElementById('s-game').innerHTML = `
             <div class="card">
-                ${html}
-                <div style="background:#eee; padding:15px; border-radius:15px; margin:15px 0;">
-                    <strong>RETO: ${j.reto.t} ${j.reto.i}</strong>
+                ${txt}
+                <hr>
+                <div style="background:#eee; padding:10px; border-radius:10px;">
+                    <strong>RETO: ${j.retoActual.t} ${j.retoActual.i}</strong>
                 </div>
-                <button class="btn" style="background:var(--p)" onclick="nextT()">OK, LO TENGO</button>
+                <button class="btn" style="background:var(--p); margin-top:15px;" onclick="nextT()">ENTENDIDO</button>
             </div>`;
     }
 
@@ -192,25 +232,49 @@
     }
 
     function finalRonda() {
-        const pueblo = pueblosJaen[Math.floor(Math.random()*pueblosJaen.length)];
-        jugadores.forEach(j => { j.puntos += 10; j.medallas.push(pueblo); });
+        const p = pueblosJaen[Math.floor(Math.random()*pueblosJaen.length)];
+        jugadores.forEach(j => {
+            j.puntos += 10;
+            j.medallas.push(p);
+        });
         mostrar('s-podio');
-        renderPodio();
+        renderRanking();
     }
 
-    function renderPodio() {
-        document.getElementById('final-team-photo').innerHTML = jugadores.map(j => `
+    function renderRanking() {
+        const list = document.getElementById('ranking-list');
+        list.innerHTML = jugadores.sort((a,b) => b.puntos - a.puntos).map(j => `
             <div class="cromo-pro">
                 <div class="acc-icon">${j.acc || ''}</div>
                 <img src="${j.foto}" class="cromo-img">
-                <div style="margin-top:5px;"><b>${j.nombre}</b></div>
-                <div style="font-size:0.7rem; color:#ccc;">🏅 ${j.medallas[0].n}</div>
-                <div style="font-size:0.6rem; margin-top:5px; line-height:1;">${j.medallas[0].c}</div>
-            </div>`).join('');
+                <div style="font-size:0.8rem;"><b>${j.nombre}</b></div>
+                <div style="color:var(--gold)">${j.puntos} PTS</div>
+            </div>
+        `).join('');
     }
 
-    // Inicializar descripción
-    setCat('infantil');
+    function finalizarProyecto() {
+        document.getElementById('titulo-podio').innerText = "🏆 PODIO FINAL JAÉN 2026";
+        document.querySelectorAll('#controles-final button:not(#div-wsp button)').forEach(b => b.style.display = 'none');
+        document.getElementById('div-wsp').style.display = 'block';
+        
+        // Mostrar medalla y curiosidad en el podio final
+        const list = document.getElementById('ranking-list');
+        list.innerHTML = jugadores.map(j => `
+            <div class="cromo-pro" style="width:160px; height:auto;">
+                <div class="acc-icon">${j.acc || ''}</div>
+                <img src="${j.foto}" class="cromo-img">
+                <div><b>${j.nombre}</b></div>
+                <div style="font-size:0.7rem; color:var(--gold)">🏅 ${j.medallas[0].n}</div>
+                <div style="font-size:0.55rem; font-style:italic;">${j.medallas[0].c}</div>
+            </div>
+        `).join('');
+    }
+
+    function compartirWsp() {
+        const text = encodeURIComponent(`🕵️‍♂️ ¡Misión terminada en Jaén! Ganador: ${jugadores[0].nombre} con ${jugadores[0].puntos} puntos. ¡Proyecto Ciudades de Andalucía!`);
+        window.open(`https://api.whatsapp.com/send?text=${text}`);
+    }
 </script>
 </body>
 </html>
