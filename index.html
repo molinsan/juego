@@ -5,70 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mímica Andalucía PRO</title>
     <style>
-        :root { 
-            --p: #2E7D32; /* Verde Andalucía */
-            --s: #81C784; 
-            --dark: #0b1a2a; 
-            --gold: #FFD700; 
-        }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: center; margin: 0; background: var(--dark); color: white; 
-            overflow: hidden; touch-action: manipulation; 
-        }
+        :root { --p: #2E7D32; --s: #81C784; --dark: #0b1a2a; --gold: #FFD700; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; overflow: hidden; }
         .screen { display: none; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
-        .card { 
-            background: white; color: #333; padding: 20px; border-radius: 20px; 
-            width: 95%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        }
-        .btn { 
-            background: var(--p); color: white; border: none; padding: 15px; border-radius: 15px; 
-            font-size: 1.1rem; font-weight: bold; width: 85%; cursor: pointer; margin: 8px 0; text-decoration: none; display: inline-block;
-        }
-
-        /* MOTOR DE RECORTE (SPRITE) */
+        .card { background: white; color: #333; padding: 20px; border-radius: 20px; width: 95%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn { background: var(--p); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; width: 85%; cursor: pointer; margin: 8px 0; }
+        
+        /* RECORTE DE IMAGEN */
         .sprite-container { 
             width: 200px; height: 200px; margin: 10px auto; 
             border-radius: 15px; border: 4px solid var(--p); 
-            overflow: hidden; background: #eee; 
-            display: flex; justify-content: flex-start; align-items: flex-start; 
+            overflow: hidden; background: #eee; position: relative;
         }
-        #v-sprite { display: block; width: 1024px; pointer-events: none; }
+        #v-sprite { position: absolute; width: 600px; height: 800px; display: block; } 
 
-        /* LISTA JUGADORES */
-        #lista-jugadores { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .perfil { position: relative; width: 70px; }
-        .perfil img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--s); object-fit: cover; }
-        .puntos-tag { position: absolute; top: -5px; right: 0; background: var(--gold); color: black; font-size: 0.7rem; padding: 2px 5px; border-radius: 8px; font-weight: bold; }
-
-        /* CAMARA */
-        #camera-feed { width: 100%; border-radius: 20px; background: #000; transform: scaleX(-1); }
+        .perfil-img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--s); object-fit: cover; margin: 5px; }
+        #camera-feed { width: 100%; border-radius: 20px; transform: scaleX(-1); }
 
         /* CARTEL WANTED */
         .wanted-container {
             background-image: url('wanted_frame.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 100%;
-            max-width: 400px;
-            height: 500px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            width: 350px; height: 450px; display: flex; flex-direction: column; align-items: center;
         }
-        .wanted-photo-frame { 
-            width: 215px; height: 215px; margin-top: 118px; 
-            overflow: hidden; border: 2px solid #3d2b1f;
-        }
+        .wanted-photo-frame { width: 190px; height: 190px; margin-top: 105px; overflow: hidden; border: 2px solid #3d2b1f; }
         .wanted-photo-frame img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.8); }
-        .wanted-text-name { margin-top: 15px; font-family: 'Courier New', monospace; font-weight: bold; font-size: 1.8rem; color: #3d2b1f; text-transform: uppercase; }
-
-        /* FOOTER INFO */
-        .footer-links { margin-top: 15px; font-size: 0.8rem; }
-        .footer-links a { color: var(--s); text-decoration: none; margin: 0 10px; }
+        .mision-tag { background: #fff3cd; color: #856404; padding: 8px; border-radius: 10px; font-weight: bold; margin-top: 10px; border: 1px solid #ffeeba; }
     </style>
 </head>
 <body>
@@ -78,32 +41,23 @@
     <div id="lista-jugadores"></div>
     <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:12px; border-radius:10px; width:70%; border:none;">
     <button class="btn" style="background:var(--s); color:black" onclick="abrirCamara()">📸 AÑADIR JUGADOR</button>
-    
     <select id="select-nivel" style="padding:10px; margin-top:10px; width:75%; border-radius:10px;">
-        <option value="exploradores">🍼 Exploradores (1-12)</option>
-        <option value="junior">🎒 Junior (1-12)</option>
-        <option value="adulto">🍷 Adulto (1-12)</option>
+        <option value="exploradores">🍼 Exploradores</option>
+        <option value="junior">🎒 Junior</option>
+        <option value="adulto">🍷 Adulto</option>
     </select>
-    
-    <button class="btn" onclick="iniciarJuego()">¡EMPEZAR PARTIDA! 🚀</button>
-
-    <div class="footer-links">
-        <a href="mailto:molinsan.jl@gmail.com">📩 Sugerencias</a>
-        <a href="https://paypal.me/7moli/tu-usuario" target="_blank">☕ Invítame a un café</a>
-    </div>
+    <button class="btn" onclick="iniciarJuego()">¡EMPEZAR! 🚀</button>
 </div>
 
 <div id="s-cam" class="screen">
     <video id="camera-feed" autoplay playsinline></video>
     <button class="btn" onclick="tomarFoto()">CAPTURAR 📸</button>
-    <button class="btn" style="background:#555" onclick="cerrarCamara()">CANCELAR</button>
 </div>
 
 <div id="s2" class="screen">
     <div id="tap-card" class="card" onclick="revelarPalabra()">
         <h2 id="turno-de"></h2>
-        <div style="font-size:5rem">🤐</div>
-        <p>TOCA PARA VER TU PALABRA</p>
+        <p>TOCA PARA VER TU SECRETO</p>
     </div>
     <div id="info-card" class="card" style="display:none">
         <h3 id="msg-rol"></h3>
@@ -111,169 +65,172 @@
             <img id="v-sprite" src="">
         </div>
         <h2 id="v-palabra" style="color:var(--p)"></h2>
-        <div style="background:#eee; padding:10px; border-radius:10px">
-            <span id="v-mision"></span>
-        </div>
-        <button class="btn" onclick="terminarTurno()">¡LISTO! ✅</button>
+        <div class="mision-tag">MODO: <span id="v-mision"></span></div>
+        <button class="btn" style="margin-top:15px" onclick="terminarTurno()">HECHO ✅</button>
     </div>
 </div>
 
-<div id="s3" class="screen">
-    <div class="wanted-container">
-        <div class="wanted-photo-frame">
-            <img id="wanted-img" src="">
-        </div>
-        <div class="wanted-text-name" id="wanted-nombre"></div>
-    </div>
-    <button class="btn" onclick="irARanking()" style="margin-top:20px">VER PUNTUACIONES</button>
+<div id="s-ajugar" class="screen">
+    <h1 style="font-size:4rem; color:var(--gold)">¡A JUGAR!</h1>
+    <p>Haced vuestra mímica con vuestros modos secretos...</p>
+    <button class="btn" onclick="mostrarVotacion()">¡TERMINAMOS! (A VOTAR) 🗳️</button>
 </div>
 
-<div id="s4" class="screen">
+<div id="s-voto" class="screen">
     <div class="card">
-        <h2>Ranking Final</h2>
-        <div id="ranking-box" style="text-align:left"></div>
-        <div style="margin-top:20px; border-top: 1px solid #ddd; padding-top:10px;">
-            <p style="font-size:0.9rem">¿Te gusta el juego?</p>
-            <a href="https://paypal.me/7moli" class="btn" style="background:#0070ba; font-size:0.9rem;">Donar con PayPal 💙</a>
-        </div>
+        <h2 id="votante-nombre"></h2>
+        <p>¿Quién es el espía?</p>
+        <div id="botones-voto"></div>
     </div>
+</div>
+
+<div id="s-wanted" class="screen">
+    <h2 id="titulo-wanted">EL MÁS VOTADO ES...</h2>
+    <div class="wanted-container">
+        <div class="wanted-photo-frame"><img id="wanted-img" src=""></div>
+        <h2 id="wanted-nombre" style="color:#3d2b1f; margin-top:10px; font-family:serif"></h2>
+    </div>
+    <div id="resultado-final" style="margin-top:10px"></div>
     <button class="btn" onclick="location.reload()">NUEVA PARTIDA 🔄</button>
 </div>
 
 <script>
-    const CONFIG = { total: 1024, cols: 3, filas: 4 };
     const db = {
         exploradores: ["GATO", "PERRO", "PATO", "CONEJO", "COCHE", "ELEFANTE", "PELOTA", "SOL", "LUNA", "PLATANO", "MANZANA", "FLOR"],
         junior: ["BOMBERO", "POLICIA", "ASTRONAUTA", "PIRATA", "DINOSAURIO", "DRAGON", "MAGO", "SUPERHEROE", "CHEF", "FUTBOLISTA", "CIENTIFICO", "EXPLORADOR"],
         adulto: ["CAFE", "PIZZA", "HIPOTECA", "RESACA", "TRABAJO", "VIAJE", "GIMNASIO", "COMPRA", "MOVIL", "RELOJ", "DORMIR", "DINERO"]
     };
-    const misiones = ["🐌 Cámara Lenta", "🔊 Con Ruidos", "🖐️ Solo Manos", "🤖 Modo Robot", "👃 Con la Nariz"];
+    const listaMisiones = ["🐌 Cámara Lenta", "🔊 Haciendo Ruidos", "🖐️ Solo Manos", "🤖 Como un Robot", "👃 Con la Nariz", "💃 Bailando", "😴 Con mucho sueño"];
 
     let jugadores = [];
     let partida = {};
     let stream;
 
+    function mostrar(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
     async function abrirCamara() {
-        if(!document.getElementById('in-nombre').value) return alert("Escribe un nombre");
         mostrar('s-cam');
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
         document.getElementById('camera-feed').srcObject = stream;
     }
 
-    function cerrarCamara() {
-        if(stream) stream.getTracks().forEach(t => t.stop());
-        mostrar('s1');
-    }
-
     function tomarFoto() {
         const video = document.getElementById('camera-feed');
         const canvas = document.createElement('canvas');
-        canvas.width = 400; canvas.height = 400;
+        canvas.width = 300; canvas.height = 300;
         const ctx = canvas.getContext('2d');
-        ctx.translate(400, 0); ctx.scale(-1, 1);
-        ctx.drawImage(video, 0, 0, 400, 400);
-        
-        jugadores.push({
-            nombre: document.getElementById('in-nombre').value.toUpperCase(),
-            foto: canvas.toDataURL(),
-            puntos: 0
-        });
+        ctx.translate(300, 0); ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, 300, 300);
+        jugadores.push({ nombre: document.getElementById('in-nombre').value.toUpperCase(), foto: canvas.toDataURL(), votos: 0 });
+        stream.getTracks().forEach(t => t.stop());
         document.getElementById('in-nombre').value = "";
-        cerrarCamara();
-        actualizarLista();
+        actualizarLista(); mostrar('s1');
     }
 
     function actualizarLista() {
-        document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `
-            <div class="perfil">
-                <div class="puntos-tag">${j.puntos}</div>
-                <img src="${j.foto}">
-            </div>
-        `).join('');
+        document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `<img src="${j.foto}" class="perfil-img">`).join('');
     }
 
     function iniciarJuego() {
-        if(jugadores.length < 3) return alert("Mínimo 3 jugadores");
+        if(jugadores.length < 3) return alert("Mínimo 3 personas");
         const nivel = document.getElementById('select-nivel').value;
         const listaPalabras = db[nivel];
-        const randomWord = listaPalabras[Math.floor(Math.random() * listaPalabras.length)];
+        
+        // Asignar misiones únicas a cada uno
+        let misionesMezcladas = [...listaMisiones].sort(() => Math.random() - 0.5);
 
-        partida = {
-            nivel: nivel,
-            palabra: randomWord,
-            idxPalabra: listaPalabras.indexOf(randomWord),
-            espiaIdx: Math.floor(Math.random() * jugadores.length),
-            turnoActual: 0,
-            mision: misiones[Math.floor(Math.random() * misiones.length)]
+        partida = { 
+            nivel, 
+            palabra: listaPalabras[Math.floor(Math.random()*listaPalabras.length)],
+            espiaIdx: Math.floor(Math.random()*jugadores.length),
+            turno: 0,
+            votanteIdx: 0,
+            misionesAsignadas: jugadores.map((_, i) => misionesMezcladas[i % misionesMezcladas.length])
         };
-        mostrar('s2');
-        prepararTurno();
+        partida.idxPalabra = listaPalabras.indexOf(partida.palabra);
+        mostrar('s2'); prepararTurno();
     }
 
     function prepararTurno() {
-        document.getElementById('turno-de').innerText = "TURNO: " + jugadores[partida.turnoActual].nombre;
+        document.getElementById('turno-de').innerText = "TURNO: " + jugadores[partida.turno].nombre;
         document.getElementById('tap-card').style.display = "block";
         document.getElementById('info-card').style.display = "none";
     }
 
     function revelarPalabra() {
-        const esEspia = (partida.turnoActual === partida.espiaIdx);
+        const esEspia = (partida.turno === partida.espiaIdx);
         document.getElementById('tap-card').style.display = "none";
         document.getElementById('info-card').style.display = "block";
+        const sprite = document.getElementById('v-sprite');
+        
+        // Asignar la misión individual
+        document.getElementById('v-mision').innerText = partida.misionesAsignadas[partida.turno];
 
         if(esEspia) {
             document.getElementById('msg-rol').innerText = "🤫 ERES EL ESPÍA";
             document.getElementById('v-palabra').innerText = "¡DISIMULA!";
             document.getElementById('box-imagen').style.display = "none";
-            document.getElementById('v-mision').innerText = "Mézclate con los demás...";
         } else {
             document.getElementById('msg-rol').innerText = "TU PALABRA ES:";
             document.getElementById('v-palabra').innerText = partida.palabra;
-            document.getElementById('box-imagen').style.display = "flex";
-            document.getElementById('v-mision').innerText = "MODO: " + partida.mision;
+            document.getElementById('box-imagen').style.display = "block";
+            sprite.src = `./${partida.nivel}1-12.jpeg`;
             
-            const img = document.getElementById('v-sprite');
-            img.src = `./${partida.nivel}1-12.jpeg`;
-            const f = CONFIG.total / CONFIG.cols;
-            const col = partida.idxPalabra % CONFIG.cols;
-            const fila = Math.floor(partida.idxPalabra / CONFIG.cols);
-            img.style.transform = `translate(${-col * f}px, ${-fila * f}px)`;
+            const col = partida.idxPalabra % 3;
+            const fila = Math.floor(partida.idxPalabra / 3);
+            sprite.style.left = `-${col * 200}px`;
+            sprite.style.top = `-${fila * 200}px`;
         }
     }
 
     function terminarTurno() {
-        partida.turnoActual++;
-        if(partida.turnoActual < jugadores.length) {
-            prepararTurno();
-        } else {
-            revelarEspia();
-        }
+        partida.turno++;
+        if(partida.turno < jugadores.length) prepararTurno();
+        else mostrar('s-ajugar');
     }
 
-    function revelarEspia() {
-        const espia = jugadores[partida.espiaIdx];
-        document.getElementById('wanted-img').src = espia.foto;
-        document.getElementById('wanted-nombre').innerText = espia.nombre;
-        mostrar('s3');
+    function mostrarVotacion() {
+        mostrar('s-voto');
+        prepararVotacionIndividual();
     }
 
-    function irARanking() {
-        jugadores.forEach((j, i) => {
-            if(i === partida.espiaIdx) j.puntos -= 10;
-            else j.puntos += 5;
+    function prepararVotacionIndividual() {
+        const votante = jugadores[partida.votanteIdx];
+        document.getElementById('votante-nombre').innerText = votante.nombre + ", ¿quién crees que es?";
+        const box = document.getElementById('botones-voto');
+        box.innerHTML = "";
+        jugadores.forEach((suspect, idx) => {
+            if(idx !== partida.votanteIdx) {
+                const b = document.createElement('button');
+                b.className = "btn"; b.innerText = suspect.nombre;
+                b.onclick = () => {
+                    jugadores[idx].votos++;
+                    partida.votanteIdx++;
+                    if(partida.votanteIdx < jugadores.length) prepararVotacionIndividual();
+                    else mostrarWanted();
+                };
+                box.appendChild(b);
+            }
         });
-        
-        const box = document.getElementById('ranking-box');
-        box.innerHTML = jugadores
-            .sort((a,b) => b.puntos - a.puntos)
-            .map(j => `<p><strong>${j.nombre}:</strong> ${j.puntos} puntos</p>`)
-            .join('');
-        mostrar('s4');
     }
 
-    function mostrar(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+    function mostrarWanted() {
+        const culpable = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
+        const esEspiaReal = (jugadores.indexOf(culpable) === partida.espiaIdx);
+        const espiaRealNombre = jugadores[partida.espiaIdx].nombre;
+        
+        document.getElementById('wanted-img').src = culpable.foto;
+        document.getElementById('wanted-nombre').innerText = culpable.nombre;
+        
+        let mensaje = esEspiaReal ? 
+            `<h2 style='color:var(--s)'>¡LO HABÉIS PILLADO! 🎉</h2><p>Efectivamente, ${culpable.nombre} era el espía.</p>` : 
+            `<h2 style='color:red'>¡HABÉIS FALLADO! 😱</h2><p>${culpable.nombre} era inocente. El espía real era <b>${espiaRealNombre}</b>.</p>`;
+        
+        document.getElementById('resultado-final').innerHTML = mensaje;
+        mostrar('s-wanted');
     }
 </script>
 </body>
