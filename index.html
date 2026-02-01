@@ -3,102 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espía en Jaén - Reto Total</title>
+    <title>Espía en Jaén - Edición Legendaria</title>
     <style>
-        :root { --p: #2E7D32; --s: #81C784; --dark: #0b1a2a; --gold: #FFD700; --red: #d32f2f; --paper: #f4e4bc; }
+        :root { --p: #2E7D32; --s: #81C784; --dark: #050a0f; --gold: #FFD700; --red: #d32f2f; --paper: #f4e4bc; --glow: rgba(255, 215, 0, 0.6); }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; overflow-x: hidden; }
         
         .screen { display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; min-height: 100vh; box-sizing: border-box; }
-        .active { display: flex; }
+        .active { display: flex; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .card { background: white; color: #333; padding: 20px; border-radius: 30px; width: 100%; max-width: 420px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
+        .card { background: white; color: #333; padding: 20px; border-radius: 30px; width: 100%; max-width: 420px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); position: relative; }
         .btn { background: var(--p); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 1.1rem; font-weight: bold; width: 90%; cursor: pointer; margin: 10px 0; box-shadow: 0 5px 0 #1b5e20; }
         .btn:active { transform: translateY(3px); box-shadow: none; }
 
-        /* SELECTOR DE RETOS */
-        .grid-retos { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; margin: 15px 0; width: 100%; }
-        .reto-item { background: #eee; padding: 10px; border-radius: 15px; cursor: pointer; border: 3px solid transparent; transition: 0.3s; color: #333; font-size: 0.7rem; font-weight: bold; }
+        /* MODO REPASO */
+        .repaso-row { display: flex; align-items: center; background: rgba(255,255,255,0.1); margin: 8px 0; padding: 10px; border-radius: 15px; width: 90%; border-left: 5px solid var(--s); }
+        .repaso-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; border: 2px solid white; }
+
+        /* CROMOS FINALES ÉPICOS */
+        .cromo { 
+            position: relative; width: 140px; background: linear-gradient(135deg, #222, #444); 
+            border: 4px solid var(--gold); border-radius: 15px; padding: 10px; 
+            box-shadow: 0 0 20px var(--glow); overflow: hidden; transform: rotate(-2deg);
+        }
+        .cromo-ganador { animation: shine 3s infinite linear; }
+        @keyframes shine { 0% { box-shadow: 0 0 10px var(--glow); } 50% { box-shadow: 0 0 30px var(--gold); } 100% { box-shadow: 0 0 10px var(--glow); } }
+        
+        .cromo-img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid var(--gold); }
+        .cromo-label { background: var(--gold); color: black; font-weight: 900; font-size: 0.7rem; padding: 2px 5px; border-radius: 5px; position: absolute; top: 110px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+
+        .lagarto-hug { position: absolute; font-size: 10rem; top: -40px; left: 50%; transform: translateX(-50%); z-index: 10; filter: drop-shadow(0 0 15px black); pointer-events: none; }
+        
+        /* RETOS */
+        .grid-retos { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; width: 100%; }
+        .reto-item { background: #eee; padding: 10px; border-radius: 15px; cursor: pointer; border: 3px solid transparent; font-size: 0.7rem; font-weight: bold; }
         .reto-item.selected { border-color: var(--p); background: var(--s); color: white; }
-        .reto-icon { font-size: 2rem; display: block; margin-bottom: 5px; }
-
-        /* ELEMENTOS JUEGO */
-        .mision-box { background: #f0f0f0; border: 4px dashed var(--p); border-radius: 20px; padding: 15px; margin-top: 15px; }
-        .wanted-box { background: var(--paper); padding: 20px; border: 10px solid #5d4037; color: #3d2b1f; width: 240px; margin: 0 auto; box-shadow: 0 10px 20px black; }
-        .wanted-img { width: 180px; height: 180px; object-fit: cover; border: 3px solid #3d2b1f; filter: sepia(0.8); }
-
-        /* FINAL */
-        #final-team-photo { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 15px; margin-top: 40px; }
-        .player-podio { position: relative; text-align: center; width: 105px; }
-        .img-podio { width: 85px; height: 85px; border-radius: 50%; border: 4px solid white; object-fit: cover; background: #ddd; }
-        .lagarto-hug { position: absolute; font-size: 8rem; top: -65px; left: 50%; transform: translateX(-50%); z-index: 1; filter: drop-shadow(0 0 10px black); pointer-events: none; }
-        .acc-icon { position: absolute; top: -15px; right: -5px; font-size: 2.2rem; z-index: 10; }
-        .tiny-medal { background: var(--gold); color: black; font-size: 0.5rem; font-weight: bold; padding: 2px 4px; border-radius: 4px; margin: 1px; display: inline-block; border: 1px solid #333; }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
-    <div style="background: rgba(0,0,0,0.8); padding: 25px; border-radius: 40px; border: 2px solid var(--s); width: 95%; max-width: 420px;">
-        <h1 style="color:var(--s); margin:0;">🕵️‍♂️ Espía en Jaén</h1>
-        <div id="lista-previa" style="display:flex; flex-wrap:wrap; justify-content:center; margin:15px 0;"></div>
-        <input type="text" id="in-nombre" placeholder="Nombre (Pe, Hache, Jota...)" style="padding:15px; border-radius:15px; width:80%; margin-bottom:10px; border:none; text-align:center;">
-        <input type="number" id="in-edad" placeholder="Edad" style="padding:15px; border-radius:15px; width:80%; margin-bottom:15px; border:none; text-align:center;">
-        <button class="btn" onclick="iniciarCamara()">📸 SELFIE</button>
-        <button class="btn" onclick="crearAvatar()" style="background:#666;">👤 AVATAR</button>
-        <button class="btn" id="btn-next" onclick="mostrar('s-retos')" style="background:var(--gold); color:black; display:none; margin-top:15px;">🚀 ELEGIR RETOS</button>
+    <div style="background: rgba(0,0,0,0.85); padding: 30px; border-radius: 40px; border: 2px solid var(--s); width: 90%; max-width: 400px; box-shadow: 0 0 30px rgba(0,255,0,0.2);">
+        <h1 style="color:var(--s); margin:0; text-shadow: 0 0 10px var(--s);">🕵️‍♂️ Espía en Jaén</h1>
+        <p style="font-size: 0.7rem; letter-spacing: 2px; color: var(--gold);">LEGENDARY EDITION</p>
+        <div id="lista-previa" style="display:flex; flex-wrap:wrap; justify-content:center; margin:20px 0;"></div>
+        <input type="text" id="in-nombre" placeholder="Nombre (Pe, Hache, Jota...)" style="padding:15px; border-radius:15px; width:85%; margin-bottom:10px; border:none; text-align:center; font-size:1.1rem;">
+        <input type="number" id="in-edad" placeholder="Edad" style="padding:15px; border-radius:15px; width:85%; margin-bottom:15px; border:none; text-align:center;">
+        <button class="btn" onclick="iniciarCamara()">📸 HACER SELFIE</button>
+        <button class="btn" onclick="crearAvatar()" style="background:#444;">👤 USAR AVATAR</button>
+        <button class="btn" id="btn-next" onclick="mostrar('s-retos')" style="background:var(--gold); color:black; display:none; margin-top:20px; font-size:1.4rem;">¡VAMOS!</button>
     </div>
 </div>
 
 <div id="s-cam" class="screen" style="background:black;">
-    <video id="v" style="width:100%; max-width:400px; border-radius:20px; transform: scaleX(-1);" autoplay playsinline></video>
-    <button class="btn" onclick="capturarFoto()">📸 ¡FOTO!</button>
+    <video id="v" style="width:100%; max-width:400px; border-radius:30px; border: 4px solid var(--gold); transform: scaleX(-1);" autoplay playsinline></video>
+    <button class="btn" onclick="capturarFoto()" style="height:80px; width:80px; border-radius:50%; background:white; color:black; font-size:2rem; border:5px solid var(--gold);">📸</button>
 </div>
 
 <div id="s-retos" class="screen">
     <div class="card">
-        <h2 style="margin:0">¿Cómo daréis pistas?</h2>
-        <p style="font-size:0.8rem; margin:5px;">Selecciona los que queráis usar:</p>
-        <div class="grid-retos" id="grid-retos">
-            </div>
-        <button class="btn" onclick="comenzarPartida()">🏁 ¡EMPEZAR JUEGO!</button>
+        <h3>🎯 Elige los Retos Activos</h3>
+        <div class="grid-retos" id="grid-retos"></div>
+        <button class="btn" onclick="comenzarPartida()" style="margin-top:20px;">¡ASIGNAR MISIONES!</button>
     </div>
+</div>
+
+<div id="s-repaso" class="screen">
+    <h1 style="color:var(--gold);">📋 RECORDAD VUESTROS RETOS</h1>
+    <div id="repaso-lista" style="width:100%; display:flex; flex-direction:column; align-items:center;"></div>
+    <p style="font-size:0.9rem; margin:20px; color:#bbb;">Cuando estéis listos, empezad la ronda de pistas.</p>
+    <button class="btn" onclick="mostrarTurnos()">🚀 EMPEZAR A HABLAR</button>
 </div>
 
 <div id="s-game" class="screen"></div>
 
 <div id="s-podio" class="screen">
-    <h1 style="color:var(--gold);">🏆 REYES DE JAÉN</h1>
-    <div id="final-team-photo"></div>
-    <button class="btn" onclick="location.reload()" style="background:#444; margin-top:30px;">REINICIAR</button>
+    <h1 style="color:var(--gold); text-shadow: 0 0 15px var(--gold);">👑 CAMPEONES DE ANDALUCÍA</h1>
+    <div id="final-team-photo" style="display:flex; flex-wrap:wrap; justify-content:center; gap:20px;"></div>
+    <button class="btn" onclick="location.reload()" style="background:#333; margin-top:40px;">NUEVA PARTIDA</button>
 </div>
 
 <script>
     const poolRetos = [
         {t: "MÍMICA", i: "🤸"}, {t: "DIBUJO AIRE", i: "🎨"}, {t: "1 PALABRA", i: "🗣️"},
         {t: "SONIDOS", i: "🐶"}, {t: "BAILANDO", i: "💃"}, {t: "CANTANDO", i: "🎤"},
-        {t: "ROBOT", i: "🤖"}, {t: "CARA RARA", i: "🎭"}, {t: "SOLO MANOS", i: "👐"},
-        {t: "DIBUJO ESPALDA", i: "🤚"}
+        {t: "ROBOT", i: "🤖"}, {t: "ESTATUA", i: "🗿"}, {t: "SOLO MANOS", i: "👐"},
+        {t: "SUSURRANDO", i: "🤫"}
     ];
 
     const pueblos = [
-        {n:"Bailén", c:"¡Donde se ganó a los franceses!"}, {n:"Cazorla", c:"Donde nace el río Guadalquivir."},
-        {n:"Úbeda", c:"¡Tiene edificios que parecen castillos de oro!"}, {n:"Baeza", c:"Donde Antonio Machado escribía poesías."},
-        {n:"Jaén", c:"¡Debajo de la Catedral vive un Lagarto!"}, {n:"Baños", c:"Su castillo es el más antiguo de Europa."},
-        {n:"Martos", c:"¡La ciudad del mar de olivos!"}, {n:"Alcalá", c:"Su fortaleza brilla en la montaña."}
+        {n:"Bailén", c:"¡La ciudad que venció a Napoleón!"}, {n:"Cazorla", c:"Hogar de las ardillas y del Guadalquivir."},
+        {n:"Úbeda", c:"¡Donde los edificios parecen de oro!"}, {n:"Baeza", c:"La ciudad de los poetas y las fuentes."},
+        {n:"Jaén", c:"¡La capital del Aceite de Oliva y el Lagarto!"}, {n:"Baños", c:"Su castillo es una fortaleza de leyenda."},
+        {n:"Martos", c:"¡Mira ese mar de olivos infinitos!"}, {n:"Alcalá", c:"La Fortaleza de la Mota te vigila desde arriba."}
     ];
 
     const niveles = {
-        infantil: [{p:"PERRO", e:"🐶", s:"🐱"}, {p:"SOL", e:"☀️", s:"🌙"}, {p:"COCHE", e:"🚗", s:"🚲"}, {p:"PATO", e:"🦆", s:"🐥"}],
-        adulto: [{p:"ACEITE", e:"🏺"}, {p:"CATEDRAL", e:"⛪"}, {p:"OLIVOS", e:"🌳"}, {p:"PIPIRRANA", e:"🥗"}]
+        infantil: [{p:"PERRO", e:"🐶", s:"🐱"}, {p:"SOL", e:"☀️", s:"🌙"}, {p:"COCHE", e:"🚗", s:"🚲"}, {p:"AVIÓN", e:"✈️", s:"🚀"}],
+        adulto: [{p:"ACEITE", e:"🏺"}, {p:"CATEDRAL", e:"⛪"}, {p:"OLIVOS", e:"🌳"}, {p:"LAGARTO", e:"🦎"}]
     };
 
     let jugadores = []; let retosActivos = []; let usados = []; let stream; let partida = {};
 
-    // Cargar retos en la grid
+    // Iniciar grid de retos
     const grid = document.getElementById('grid-retos');
     poolRetos.forEach((r, idx) => {
         grid.innerHTML += `<div class="reto-item selected" id="reto-${idx}" onclick="toggleReto(${idx})">
-            <span class="reto-icon">${r.i}</span>${r.t}
+            <span style="font-size:1.8rem; display:block;">${r.i}</span>${r.t}
         </div>`;
         retosActivos.push(r);
     });
@@ -110,10 +121,7 @@
             if(retosActivos.length <= 1) return;
             el.classList.remove('selected');
             retosActivos = retosActivos.filter(item => item.t !== r.t);
-        } else {
-            el.classList.add('selected');
-            retosActivos.push(r);
-        }
+        } else { el.classList.add('selected'); retosActivos.push(r); }
     }
 
     function mostrar(id) {
@@ -122,28 +130,29 @@
     }
 
     async function iniciarCamara() {
-        if(!document.getElementById('in-nombre').value) return alert("Dime tu nombre");
+        if(!document.getElementById('in-nombre').value) return alert("Escribe tu nombre");
         try {
             stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
             document.getElementById('v').srcObject = stream;
             mostrar('s-cam');
-        } catch(e) { alert("Cámara no disponible, usa Avatar"); }
+        } catch(e) { alert("Cámara no lista. Usa Avatar."); }
     }
 
     function capturarFoto() {
         const video = document.getElementById('v');
-        const canvas = document.createElement('canvas'); canvas.width = 300; canvas.height = 300;
-        const ctx = canvas.getContext('2d'); ctx.translate(300,0); ctx.scale(-1,1); ctx.drawImage(video, 0, 0, 300, 300);
+        const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 400;
+        const ctx = canvas.getContext('2d'); ctx.translate(400,0); ctx.scale(-1,1); ctx.drawImage(video, 0, 0, 400, 400);
         guardarJugador(canvas.toDataURL());
         if(stream) stream.getTracks().forEach(t => t.stop());
         mostrar('s1');
     }
 
     function crearAvatar() {
-        if(!document.getElementById('in-nombre').value) return alert("Dime tu nombre");
-        const canvas = document.createElement('canvas'); canvas.width = 300; canvas.height = 300;
-        const ctx = canvas.getContext('2d'); ctx.fillStyle = `hsl(${Math.random()*360}, 70%, 80%)`; ctx.fillRect(0,0,300,300);
-        ctx.fillStyle = "black"; ctx.font = "150px Arial"; ctx.textAlign = "center"; ctx.fillText("👤", 150, 200);
+        const name = document.getElementById('in-nombre').value; if(!name) return alert("Escribe tu nombre");
+        const canvas = document.createElement('canvas'); canvas.width = 400; canvas.height = 400;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = `hsl(${Math.random()*360}, 60%, 70%)`; ctx.fillRect(0,0,400,400);
+        ctx.fillStyle = "white"; ctx.font = "200px Arial"; ctx.textAlign = "center"; ctx.fillText("👤", 200, 270);
         guardarJugador(canvas.toDataURL());
     }
 
@@ -160,37 +169,30 @@
     }
 
     function actualizarLista() {
-        document.getElementById('lista-previa').innerHTML = jugadores.map(j => `<img src="${j.foto}" style="width:55px; height:55px; border-radius:50%; border:2px solid white; margin:5px; object-fit:cover;">`).join('');
+        document.getElementById('lista-previa').innerHTML = jugadores.map(j => `<img src="${j.foto}" style="width:60px; height:60px; border-radius:50%; border:3px solid var(--s); margin:5px; object-fit:cover;">`).join('');
         document.getElementById('btn-next').style.display = jugadores.length >= 3 ? "block" : "none";
     }
 
     function comenzarPartida() {
         const edadMin = Math.min(...jugadores.map(j => j.edad));
         let pool = (edadMin <= 7) ? niveles.infantil : niveles.adulto;
-        let disp = pool.filter(p => !usados.includes(p.p)); if(disp.length === 0) { usados = []; disp = pool; }
-        let pObj = disp[Math.floor(Math.random()*disp.length)]; usados.push(pObj.p);
-
-        // Asignar retos aleatorios a cada jugador para esta ronda
-        let retosRonda = [...retosActivos];
+        let pObj = pool[Math.floor(Math.random()*pool.length)];
+        
+        let poolRetosPartida = [...retosActivos];
         jugadores.forEach(j => {
-            if(retosRonda.length === 0) retosRonda = [...retosActivos];
-            let rIdx = Math.floor(Math.random()*retosRonda.length);
-            j.retoActual = retosRonda.splice(rIdx, 1)[0];
+            if(poolRetosPartida.length === 0) poolRetosPartida = [...retosActivos];
+            let rIdx = Math.floor(Math.random()*poolRetosPartida.length);
+            j.retoActual = poolRetosPartida.splice(rIdx, 1)[0];
         });
 
         partida = { palabra: pObj, espiaIdx: Math.floor(Math.random()*jugadores.length), turno: 0, infantil: (edadMin <= 7) };
-        proximoTurno();
+        proximoTurnoIndividual();
     }
 
-    function proximoTurno() {
+    function proximoTurnoIndividual() {
         mostrar('s-game');
         const j = jugadores[partida.turno];
-        document.getElementById('s-game').innerHTML = `
-            <div class="card" onclick="revelar()">
-                <h2>Turno de: <br><span style="color:var(--p)">${j.nombre}</span></h2>
-                <div style="font-size:6rem; margin:20px 0;">🧭</div>
-                <p><b>TOCA PARA VER TU MISIÓN</b></p>
-            </div>`;
+        document.getElementById('s-game').innerHTML = `<div class="card" onclick="revelar()"><h2>Turno secreto de:</h2><h1 style="color:var(--p)">${j.nombre}</h1><div style="font-size:6rem;">🕵️‍♂️</div><p>PULSA PARA VER TU PALABRA</p></div>`;
     }
 
     function revelar() {
@@ -201,13 +203,12 @@
         
         document.getElementById('s-game').innerHTML = `
             <div class="card" style="border:10px solid ${esE?'var(--red)':'var(--p)'}">
-                <div style="font-size:6rem;">${icono}</div>
+                <div style="font-size:7rem;">${icono}</div>
                 <h1 style="margin:5px 0;">${texto}</h1>
-                <hr>
-                <div class="mision-box">
-                    <p style="margin:0; font-size:0.8rem;">TU RETO:</p>
+                <div style="background:#eee; padding:15px; border-radius:20px; border:3px solid var(--p);">
+                    <p style="margin:0; font-size:0.8rem;">TU MANERA DE HACERLO:</p>
                     <span style="font-size:3rem;">${j.retoActual.i}</span>
-                    <h2 style="margin:0; color:var(--p)">${j.retoActual.t}</h2>
+                    <h2 style="margin:0;">${j.retoActual.t}</h2>
                 </div>
                 <button class="btn" onclick="siguiente()">¡LO TENGO!</button>
             </div>`;
@@ -215,11 +216,24 @@
 
     function siguiente() {
         partida.turno++;
-        if(partida.turno < jugadores.length) proximoTurno();
-        else iniciarVoto();
+        if(partida.turno < jugadores.length) proximoTurnoIndividual();
+        else prepararRepaso();
     }
 
-    function iniciarVoto() {
+    function prepararRepaso() {
+        const lista = document.getElementById('repaso-lista');
+        lista.innerHTML = jugadores.map(j => `
+            <div class="repaso-row">
+                <img src="${j.foto}" class="repaso-img">
+                <div style="text-align:left">
+                    <b style="color:var(--gold)">${j.nombre}</b> lo hará:<br>
+                    <span style="font-size:1.2rem">${j.retoActual.i} ${j.retoActual.t}</span>
+                </div>
+            </div>`).join('');
+        mostrar('s-repaso');
+    }
+
+    function mostrarTurnos() {
         partida.votos = new Array(jugadores.length).fill(0);
         partida.votoTurno = 0;
         lanzarVoto();
@@ -227,8 +241,9 @@
 
     function lanzarVoto() {
         const j = jugadores[partida.votoTurno];
-        const btns = jugadores.map((jug, i) => i !== partida.votoTurno ? `<button class="btn" onclick="contarVoto(${i})" style="padding:12px; margin:5px;">${jug.nombre}</button>` : '').join('');
-        document.getElementById('s-game').innerHTML = `<div class="card"><h2>${j.nombre}</h2><p>¿Quién ha sido el espía?</p><div style="display:flex; flex-direction:column;">${btns}</div></div>`;
+        const btns = jugadores.map((jug, i) => i !== partida.votoTurno ? `<button class="btn" onclick="contarVoto(${i})">${jug.nombre}</button>` : '').join('');
+        document.getElementById('s-game').innerHTML = `<div class="card"><h2>${j.nombre} vota:</h2><p>¿Quién es el infiltrado?</p>${btns}</div>`;
+        mostrar('s-game');
     }
 
     function contarVoto(i) {
@@ -238,51 +253,56 @@
     }
 
     function mostrarWanted() {
-        const maxVotos = Math.max(...partida.votos);
-        const culpableIdx = partida.votos.indexOf(maxVotos);
-        const c = jugadores[culpableIdx];
+        const maxV = Math.max(...partida.votos);
+        const cIdx = partida.votos.indexOf(maxV);
+        const c = jugadores[cIdx];
         document.getElementById('s-game').innerHTML = `
-            <div class="wanted-box">
-                <h1 style="margin:0; font-family:serif;">WANTED</h1>
-                <img src="${c.foto}" class="wanted-img">
-                <h2 style="margin:10px 0;">${c.nombre}</h2>
+            <div style="background:var(--paper); padding:20px; border:10px solid #5d4037; color:#3d2b1f; width:260px; box-shadow:0 0 50px black;">
+                <h1 style="margin:0; font-family:serif; border-bottom:4px double #3d2b1f;">WANTED</h1>
+                <img src="${c.foto}" style="width:200px; height:200px; object-fit:cover; margin:15px 0; border:4px solid #3d2b1f; filter:sepia(0.5);">
+                <h2 style="margin:0;">${c.nombre}</h2>
             </div>
-            <button class="btn" onclick="finalizarRonda(${culpableIdx})" style="background:var(--gold); color:black;">¿ES EL ESPÍA?</button>`;
+            <button class="btn" onclick="finalizarRonda(${cIdx})" style="background:var(--gold); color:black; margin-top:20px;">¿ES EL ESPÍA?</button>`;
     }
 
     function finalizarRonda(acusadoIdx) {
         const esE = (acusadoIdx === partida.espiaIdx);
         const p = pueblos[Math.floor(Math.random()*pueblos.length)];
-        if(esE) { jugadores.forEach((j,i) => { if(i !== partida.espiaIdx) { j.puntos += 10; j.medallas.push(p.n); }}); }
-        else { jugadores[partida.espiaIdx].puntos += 20; jugadores[partida.espiaIdx].medallas.push(p.n); }
+        if(esE) { jugadores.forEach((j,i) => { if(i !== partida.espiaIdx) { j.puntos += 10; j.medallas.push(p); }}); }
+        else { jugadores[partida.espiaIdx].puntos += 20; jugadores[partida.espiaIdx].medallas.push(p); }
 
         document.getElementById('s-game').innerHTML = `
-            <div class="card">
-                <h1 style="color:${esE?'var(--p)':'var(--red)'}">${esE ? '¡CAZADO!' : '¡SE ESCAPÓ!'}</h1>
+            <div class="card" style="border:10px solid ${esE?'var(--p)':'var(--red)'}">
+                <h1 style="font-size:3rem; margin:0;">${esE ? '✅' : '❌'}</h1>
+                <h2>${esE ? '¡LO CAZASTEIS!' : '¡SE ESCAPÓ!'}</h2>
                 <p>El espía era <b>${jugadores[partida.espiaIdx].nombre}</b></p>
-                <div style="background:#fff9c4; padding:15px; border-radius:15px; border-left: 5px solid var(--gold); margin:15px 0; text-align:left; font-size:0.9rem;">
-                    <b>🎁 Regalo de ${p.n}:</b><br>${p.c}
+                <div style="background:#fff9c4; padding:15px; border-radius:15px; border-left: 5px solid var(--gold); text-align:left; font-size:0.8rem;">
+                    <b>🎁 Medalla de ${p.n}:</b><br>${p.c}
                 </div>
                 <button class="btn" onclick="mostrar('s-retos')">NUEVA RONDA</button>
-                <button class="btn" onclick="podioFinal()" style="background:#444;">VER PODIO</button>
+                <button class="btn" onclick="podioFinal()" style="background:#333;">VER PODIO FINAL</button>
             </div>`;
     }
 
     function podioFinal() {
         const minP = Math.min(...jugadores.map(j => j.puntos));
         const maxP = Math.max(...jugadores.map(j => j.puntos));
+        
         document.getElementById('final-team-photo').innerHTML = jugadores.map(j => {
             const esPerdedor = j.puntos === minP && j.puntos < maxP;
             const esGanador = j.puntos === maxP && j.puntos > 0;
+            
             return `
-            <div class="player-podio">
+            <div class="cromo ${esGanador?'cromo-ganador':''}">
                 ${esPerdedor ? '<div class="lagarto-hug">🦎</div>' : ''}
-                <div class="acc-icon">${j.acc}</div>
-                <img src="${j.foto}" class="img-podio" style="border-color:${esGanador?'var(--gold)':'white'}">
-                ${esGanador ? '<div style="position:absolute; top:-35px; left:0; font-size:2.5rem; z-index:20;">👑</div>' : ''}
-                <div style="font-weight:bold; font-size:0.8rem; margin-top:5px;">${j.nombre}</div>
-                <div style="color:var(--gold); font-weight:bold;">${j.puntos} PTS</div>
-                <div style="margin-top:5px;">${j.medallas.map(m=>`<span class="tiny-medal">${m}</span>`).join('')}</div>
+                <div class="acc-icon" style="position:absolute; top:5px; right:5px; z-index:20;">${j.acc}</div>
+                <img src="${j.foto}" class="cromo-img">
+                <div class="cromo-label">${j.nombre}</div>
+                <div style="margin-top:12px; color:var(--gold); font-weight:bold; font-size:1.1rem;">${j.puntos} PTS</div>
+                <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:2px; margin-top:5px;">
+                    ${j.medallas.map(m => `<span style="background:white; color:black; font-size:0.45rem; padding:1px 3px; border-radius:3px; font-weight:bold;">${m.n}</span>`).join('')}
+                </div>
+                ${esGanador ? '<div style="font-size:0.6rem; color:white; margin-top:5px; font-style:italic;">Rey de Jaén</div>' : ''}
             </div>`;
         }).join('');
         mostrar('s-podio');
