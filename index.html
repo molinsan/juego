@@ -6,239 +6,185 @@
     <title>Un Espía en Andalucía</title>
     <style>
         :root { --p: #2E7D32; --s: #81C784; --dark: #0b1a2a; --gold: #FFD700; --white: #ffffff; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; margin: 0; background: var(--dark); color: var(--white); overflow-x: hidden; }
-        
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: var(--white); overflow-x: hidden; }
         .screen { display: none; min-height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
         .active { display: flex; }
-
-        /* Pantalla de Inicio con fondo */
-        #s1 { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('inicio.jpeg'); background-size: cover; background-position: center; }
-
+        #s1 { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('inicio.jpeg') center/cover; }
         .card { background: white; color: #333; padding: 20px; border-radius: 25px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 10px 0; }
-        .btn { background: var(--p); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; width: 90%; cursor: pointer; margin: 8px 0; transition: transform 0.2s; }
-        .btn:active { transform: scale(0.95); }
-
-        /* Estilos de Selfies y Jugadores */
-        .perfil-img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--s); margin: 5px; object-fit: cover; }
+        .btn { background: var(--p); color: white; border: none; padding: 15px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; width: 90%; cursor: pointer; margin: 8px 0; }
+        .perfil-img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--s); margin: 5px; object-fit: cover; background: #222; }
         .puntos-tag { font-size: 0.8rem; background: var(--gold); color: black; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
-
-        /* Pantalla de Resultados y Medallas */
-        .ganadores-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; width: 100%; }
-        .ganador-ronda-box { position: relative; width: 100px; }
-        .medalla { position: absolute; top: -15px; right: -5px; font-size: 2.5rem; z-index: 5; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .foto-ganador { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--gold); object-fit: cover; background: #333; }
-        
-        .wanted-container { background-image: url('wanted_frame.png'); background-size: contain; background-repeat: no-repeat; background-position: center; width: 280px; height: 350px; display: flex; flex-direction: column; align-items: center; margin: 10px auto; }
-        .wanted-photo { width: 155px; height: 155px; margin-top: 88px; object-fit: cover; filter: sepia(0.7) contrast(1.2); }
-
-        /* Cámara y Vídeo */
-        #camera-feed { width: 100%; max-width: 400px; border-radius: 20px; transform: scaleX(-1); background: #000; box-shadow: 0 0 20px var(--s); }
-        .modo-box { background: #f0fdf4; padding: 15px; border-radius: 20px; border: 3px dashed var(--p); margin: 15px 0; }
-        
-        #canvas-final { max-width: 100%; border: 5px solid var(--gold); border-radius: 20px; margin-top: 10px; }
-        .contacto { font-size: 0.7rem; color: #bbb; margin-top: 15px; }
+        #camera-feed { width: 100%; max-width: 400px; border-radius: 20px; transform: scaleX(-1); background: #000; }
+        .ganadores-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .ganador-ronda-box { position: relative; width: 90px; }
+        .medalla { position: absolute; top: -10px; right: -5px; font-size: 2rem; z-index: 5; }
+        .foto-ganador { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; }
+        .wanted-container { background: url('wanted_frame.png') no-repeat center/contain; width: 260px; height: 320px; display: flex; flex-direction: column; align-items: center; margin: 10px auto; }
+        .wanted-photo { width: 145px; height: 145px; margin-top: 82px; object-fit: cover; filter: sepia(0.7); }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
     <div style="background: rgba(0,0,0,0.8); padding: 25px; border-radius: 30px; width: 90%; max-width: 450px;">
-        <h1 style="color:var(--s); margin:0 0 10px 0; font-size: 2rem;">🕵️‍♂️ Un Espía en Andalucía</h1>
+        <h1 style="color:var(--s); margin:0 0 10px 0;">🕵️‍♂️ Un Espía en Andalucía</h1>
         <div id="lista-jugadores" style="display:flex; flex-wrap:wrap; justify-content:center; margin-bottom:15px;"></div>
         <input type="text" id="in-nombre" placeholder="Tu nombre..." style="padding:15px; border-radius:12px; width:85%; border:none; margin-bottom:15px; font-size:1.1rem;">
         <button class="btn" style="background:var(--s); color:black" onclick="abrirCamara()">📸 HACERSE SELFIE</button>
-        <select id="select-nivel" style="padding:12px; width:90%; border-radius:12px; margin-top:5px; font-size:1rem;">
-            <option value="exp">🍼 Exploradores (4-8 años)</option>
-            <option value="jun">🎒 Junior (9-15 años)</option>
-            <option value="ado">📱 Adolescente (16-17 años)</option>
-            <option value="adu">🍷 Adultos (+18 años)</option>
+        <select id="select-nivel" style="padding:12px; width:90%; border-radius:12px; margin-top:5px;">
+            <option value="exp">🍼 Exploradores (4-8)</option>
+            <option value="jun">🎒 Junior (9-15)</option>
+            <option value="ado">📱 Adolescente (16-17)</option>
+            <option value="adu">🍷 Adultos (+18)</option>
         </select>
         <button class="btn" onclick="iniciarJuego()" style="background:var(--gold); color:black; margin-top:20px; font-size:1.3rem;">🚀 EMPEZAR</button>
-        <div class="contacto">📩 molinsan.jl@gmail.com | 💰 paypal.me/7moli</div>
     </div>
 </div>
 
 <div id="s-cam" class="screen">
-    <video id="camera-feed" autoplay playsinline></video>
-    <button class="btn" onclick="tomarFoto()" style="height:70px; margin-top:30px; border-radius:50px;">📸 ¡FOTO!</button>
+    <video id="camera-feed" autoplay playsinline muted></video>
+    <button class="btn" onclick="tomarFoto()" style="height:70px; margin-top:20px;">📸 ¡CAPTURAR!</button>
+    <button class="btn" style="background:#666" onclick="mostrar('s1')">CANCELAR</button>
 </div>
 
-<div id="s2" class="screen">
-    <div id="tap-card" class="card" onclick="revelarPalabra()">
-        <h2 id="txt-turno-nombre"></h2>
-        <div style="font-size:5rem; margin:20px 0;">🤫</div>
-        <p>TOCA PARA VER TU SECRETO</p>
-    </div>
-    <div id="info-card" class="card" style="display:none">
-        </div>
-</div>
-
-<div id="s-misiones" class="screen">
-    <div id="mision-cont" class="card">
-        </div>
-</div>
-
-<div id="s-voto" class="screen">
-    <div id="voto-cont" class="card">
-        </div>
-</div>
-
-<div id="s-wanted" class="screen" style="overflow-y: auto; justify-content: flex-start; padding-top: 20px;">
-    <h2 style="color:var(--gold); margin:0 0 10px 0; text-shadow: 2px 2px #000;">🥇 LÍDERES ACTUALES</h2>
-    <div id="ganadores-ronda-cont" class="ganadores-container"></div> 
-    
-    <div id="wanted-area" class="wanted-container">
-        <img id="wanted-img" class="wanted-photo">
-        <div id="wanted-nombre" style="font-weight:bold; color:#3d2b1f; margin-top:8px; font-family:serif; font-size: 1.3rem;"></div>
-    </div>
-    
-    <div class="card">
-        <div id="resultado-final-msg" style="font-weight:bold; font-size: 1.2rem; color:var(--p);"></div>
-        <div id="tabla-puntos" style="font-size:0.9rem; background:#f0f0f0; padding:10px; border-radius:15px; margin:10px 0; line-height:1.5;"></div>
-        <button class="btn" onclick="iniciarJuego()">🔄 OTRA RONDA</button>
-        <button class="btn" style="background:#444" onclick="generarPodiumFinal()">🏆 FINALIZAR Y PODIO</button>
-    </div>
-</div>
-
-<div id="s-final" class="screen">
-    <h2 style="color:var(--gold); margin-bottom:10px; font-size:1.8rem;">🌳 CAMPEONES EN JAÉN</h2>
-    <canvas id="canvas-final" width="600" height="400"></canvas>
-    <button class="btn" style="margin-top:25px;" onclick="location.reload()">🎮 NUEVA PARTIDA</button>
-    <div class="contacto">💰 Donaciones: paypal.me/jandrop86</div>
-</div>
+<div id="s-game" class="screen"></div>
 
 <script>
     const db = {
-        exp: [{p:"GATO",e:"🐱",pi:"Un animal que hace miau"}, {p:"SOL",e:"☀️",pi:"Sale de día y da calor"}, {p:"PELOTA",e:"⚽",pi:"Sirve para dar patadas"}],
-        jun: [{p:"PIRATA",e:"🏴‍CQ",pi:"Lleva un loro y busca tesoros"}, {p:"ROBOT",e:"🤖",pi:"Es de metal y camina raro"}, {p:"CIENTÍFICO",e:"🧪",pi:"Hace mezclas en un laboratorio"}],
-        ado: [{p:"TIKTOK",e:"💃",pi:"App para ver bailes"}, {p:"EXAMEN",e:"📝",pi:"Te pone nervioso en clase"}, {p:"GIMNASIO",e:"🏋️",pi:"Lugar para ponerse fuerte"}],
-        adu: [{p:"HIPOTECA",e:"🏠",pi:"Deuda que pagas cada mes"}, {p:"RESACA",e:"🤢",pi:"Como te sientes tras beber mucho"}, {p:"IMPUESTOS",e:"🧾",pi:"Dinero para el estado"}]
+        exp: [{p:"GATO",e:"🐱",pi:"Animal que hace miau"}, {p:"SOL",e:"☀️",pi:"Sale de día"}],
+        jun: [{p:"PIRATA",e:"🏴‍☠️",pi:"Busca tesoros"}, {p:"ROBOT",e:"🤖",pi:"Es de metal"}],
+        ado: [{p:"TIKTOK",e:"💃",pi:"App de bailes"}, {p:"EXAMEN",e:"📝",pi:"En el colegio"}],
+        adu: [{p:"HIPOTECA",e:"🏠",pi:"Dinero del banco"}, {p:"RESACA",e:"🤢",pi:"Tras beber"}]
     };
-
-    const misiones = [
-        {t:"Cámara Lenta", i:"🐌"}, {t:"Modo Robot", i:"🤖"}, {t:"Bailando", i:"💃"},
-        {t:"Sin usar manos", i:"🖐️🚫"}, {t:"A la pata coja", i:"🦩"}, {t:"Muy Rápido", i:"🏃"}
-    ];
-
+    const misiones = [{t:"Cámara Lenta",i:"🐌"},{t:"Robot",i:"🤖"},{t:"Bailando",i:"💃"},{t:"Sin manos",i:"🖐️🚫"}];
+    
     let jugadores = [];
     let partida = {};
-    let stream;
+    let streamMedia;
 
     function mostrar(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    function abrirCamara() {
+    async function abrirCamara() {
         if(!document.getElementById('in-nombre').value) return alert("Escribe tu nombre");
-        mostrar('s-cam');
-        navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}}).then(s => {
-            stream = s; document.getElementById('camera-feed').srcObject = s;
-        });
+        try {
+            streamMedia = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+            const video = document.getElementById('camera-feed');
+            video.srcObject = streamMedia;
+            mostrar('s-cam');
+        } catch (err) {
+            alert("No se puede acceder a la cámara. Asegúrate de dar permisos o usar HTTPS.");
+        }
     }
 
     function tomarFoto() {
+        const video = document.getElementById('camera-feed');
         const canvas = document.createElement('canvas');
-        canvas.width=400; canvas.height=400;
-        canvas.getContext('2d').drawImage(document.getElementById('camera-feed'), 0, 0, 400, 400);
+        canvas.width = video.videoWidth || 400;
+        canvas.height = video.videoHeight || 400;
+        const ctx = canvas.getContext('2d');
+        
+        // Espejo para que el selfie salga como se ve en pantalla
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        const fotoData = canvas.toDataURL('image/jpeg');
         jugadores.push({
             nombre: document.getElementById('in-nombre').value.toUpperCase(),
-            foto: canvas.toDataURL(),
+            foto: fotoData,
             puntos: 0,
             votos: 0
         });
-        stream.getTracks().forEach(t => t.stop());
+
+        if (streamMedia) streamMedia.getTracks().forEach(t => t.stop());
         document.getElementById('in-nombre').value = "";
-        actualizarLista(); mostrar('s1');
+        actualizarLista();
+        mostrar('s1');
     }
 
     function actualizarLista() {
         document.getElementById('lista-jugadores').innerHTML = jugadores.map(j => `
-            <div style="margin:5px; text-align:center;">
+            <div style="margin:5px">
                 <img src="${j.foto}" class="perfil-img"><br>
                 <b class="puntos-tag">${j.puntos} pts</b>
             </div>`).join('');
     }
 
     function iniciarJuego() {
-        if(jugadores.length < 3) return alert("Hacen falta 3 jugadores mínimo");
+        if(jugadores.length < 3) return alert("Mínimo 3 jugadores");
         const nivel = document.getElementById('select-nivel').value;
-        const palabraElegida = db[nivel][Math.floor(Math.random() * db[nivel].length)];
-        
-        jugadores.forEach(j => j.votos = 0);
         partida = {
-            palabra: palabraElegida,
-            espiaIdx: Math.floor(Math.random() * jugadores.length),
+            obj: db[nivel][Math.floor(Math.random()*db[nivel].length)],
+            espiaIdx: Math.floor(Math.random()*jugadores.length),
             turno: 0, mTurno: 0, vIdx: 0,
-            misionesAsignadas: jugadores.map((_, i) => misiones[i % misiones.length]).sort(() => 0.5 - Math.random())
+            mAsignadas: jugadores.map((_,i) => misiones[i % misiones.length]).sort(()=>0.5-Math.random())
         };
-        mostrar('s2'); prepararTurno();
+        mostrar('s-game');
+        prepararTurno();
     }
 
     function prepararTurno() {
         const j = jugadores[partida.turno];
-        document.getElementById('txt-turno-nombre').innerText = "TURNO: " + j.nombre;
-        document.getElementById('tap-card').style.display = "block";
-        document.getElementById('info-card').style.display = "none";
+        const cont = document.getElementById('s-game');
+        cont.innerHTML = `
+            <div class="card" onclick="revelarRol()">
+                <h2>TURNO: ${j.nombre}</h2>
+                <div style="font-size:4rem">🤫</div>
+                <p>TOCA PARA VER TU SECRETO</p>
+            </div>`;
     }
 
-    function revelarPalabra() {
-        const esEspia = (partida.turno === partida.espiaIdx);
-        const card = document.getElementById('info-card');
-        document.getElementById('tap-card').style.display = "none";
-        card.style.display = "block";
-
-        card.innerHTML = `
-            <h3 style="margin:0">${esEspia ? "🕵️‍♂️ ERES EL ESPÍA" : "TU PALABRA ES:"}</h3>
-            <div style="font-size:6rem; margin:10px 0;">${esEspia ? "❓" : partida.palabra.e}</div>
-            <h2 style="color:var(--p); margin:0;">${esEspia ? "¡DISIMULA!" : partida.palabra.p}</h2>
-            <p style="font-style:italic; color:#666; margin-top:15px;">${esEspia ? "PISTA: " + partida.palabra.pi : "¡Mucha suerte!"}</p>
-            <button class="btn" onclick="terminarTurno()">HE VISTO MI ROL ✅</button>
-        `;
+    function revelarRol() {
+        const esE = (partida.turno === partida.espiaIdx);
+        const cont = document.getElementById('s-game');
+        cont.innerHTML = `
+            <div class="card">
+                <h3>${esE ? "🕵️‍♂️ ERES EL ESPÍA" : "TU PALABRA:"}</h3>
+                <div style="font-size:6rem">${esE ? "❓" : partida.obj.e}</div>
+                <h2 style="color:var(--p)">${esE ? "¡AVERÍGUALO!" : partida.obj.p}</h2>
+                <p>${esE ? "<b>PISTA:</b> " + partida.obj.pi : "¡Mucha suerte!"}</p>
+                <button class="btn" onclick="siguienteTurno()">LISTO ✅</button>
+            </div>`;
     }
 
-    function terminarTurno() {
+    function siguienteTurno() {
         partida.turno++;
         if(partida.turno < jugadores.length) prepararTurno();
-        else { partida.mTurno = 0; mostrarMision(); }
+        else mostrarMisiones();
     }
 
-    function mostrarMision() {
-        mostrar('s-misiones');
+    function mostrarMisiones() {
         const j = jugadores[partida.mTurno];
-        const m = partida.misionesAsignadas[partida.mTurno];
-        document.getElementById('mision-cont').innerHTML = `
-            <h2 style="margin:0">MÍMICA: ${j.nombre}</h2>
-            <p>Debes actuar con este estilo:</p>
-            <div class="modo-box">
-                <div style="font-size:4rem">${m.i}</div>
-                <div style="font-weight:bold; font-size:1.4rem; color:var(--p);">${m.t}</div>
-            </div>
-            <button class="btn" onclick="siguienteMision()">LISTO / SIGUIENTE ▶️</button>
-        `;
+        const m = partida.mAsignadas[partida.mTurno];
+        const cont = document.getElementById('s-game');
+        cont.innerHTML = `
+            <div class="card">
+                <h2>MÍMICA: ${j.nombre}</h2>
+                <div class="modo-box">
+                    <div style="font-size:4rem">${m.i}</div>
+                    <div style="font-weight:bold">${m.t}</div>
+                </div>
+                <button class="btn" onclick="sigMision()">SIGUIENTE ▶️</button>
+            </div>`;
     }
 
-    function siguienteMision() {
+    function sigMision() {
         partida.mTurno++;
-        if(partida.mTurno < jugadores.length) mostrarMision();
-        else { partida.vIdx = 0; mostrar('s-voto'); lanzarVotacion(); }
+        if(partida.mTurno < jugadores.length) mostrarMisiones();
+        else lanzarVotacion();
     }
 
     function lanzarVotacion() {
         const votante = jugadores[partida.vIdx];
-        const cont = document.getElementById('voto-cont');
-        let botones = jugadores.map((s, idx) => 
-            idx !== partida.vIdx ? `<button class="btn" onclick="procesarVoto(${idx})">${s.nombre}</button>` : ""
-        ).join('');
-
-        cont.innerHTML = `
-            <h2>${votante.nombre}</h2>
-            <p>¿Quién crees que es el espía?</p>
-            <div style="margin-top:10px">${botones}</div>
-        `;
+        const cont = document.getElementById('s-game');
+        let btns = jugadores.map((s, idx) => idx !== partida.vIdx ? `<button class="btn" onclick="votar(${idx})">${s.nombre}</button>` : "").join('');
+        cont.innerHTML = `<div class="card"><h2>${votante.nombre}, ¿quién es el espía?</h2>${btns}</div>`;
     }
 
-    function procesarVoto(idx) {
+    function votar(idx) {
         jugadores[idx].votos++;
         partida.vIdx++;
         if(partida.vIdx < jugadores.length) lanzarVotacion();
@@ -246,78 +192,28 @@
     }
 
     function finalizarRonda() {
-        // Encontrar al más votado
         const culpable = [...jugadores].sort((a,b) => b.votos - a.votos)[0];
-        const esEspiaReal = (jugadores.indexOf(culpable) === partida.espiaIdx);
-        
-        if(esEspiaReal) {
+        const esE = (jugadores.indexOf(culpable) === partida.espiaIdx);
+        if(esE) { 
             jugadores.forEach((j, i) => { if(i !== partida.espiaIdx) j.puntos += 10; });
-            document.getElementById('resultado-final-msg').innerText = "✅ ¡ESPÍA CAZADO! Inocentes +10 pts";
         } else {
             jugadores[partida.espiaIdx].puntos += 20;
-            document.getElementById('resultado-final-msg').innerText = "👺 ¡EL ESPÍA ESCAPÓ! Espía +20 pts";
         }
 
-        // Medallas para los líderes
-        const maxPts = Math.max(...jugadores.map(j => j.puntos));
-        const ganadores = jugadores.filter(j => j.puntos === maxPts && j.puntos > 0);
+        const max = Math.max(...jugadores.map(j => j.puntos));
+        const ganadores = jugadores.filter(j => j.puntos === max && j.puntos > 0);
+        const cont = document.getElementById('s-game');
         
-        document.getElementById('ganadores-ronda-cont').innerHTML = ganadores.map(g => `
-            <div class="ganador-ronda-box">
-                <div class="medalla">🥇</div>
-                <img src="${g.foto}" class="foto-ganador">
-                <div style="font-weight:bold; font-size:0.8rem; margin-top:5px;">${g.nombre}</div>
-            </div>`).join('');
-
-        document.getElementById('wanted-img').src = culpable.foto;
-        document.getElementById('wanted-nombre').innerText = culpable.nombre;
-        document.getElementById('tabla-puntos').innerHTML = "<b>PUNTUACIÓN ACTUAL:</b><br>" + 
-            jugadores.map(j => `${j.nombre}: ${j.puntos} pts`).join(' | ');
-            
-        mostrar('s-wanted');
-    }
-
-    function generarPodiumFinal() {
-        mostrar('s-final');
-        const canvas = document.getElementById('canvas-final');
-        const ctx = canvas.getContext('2d');
-        const maxPts = Math.max(...jugadores.map(j => j.puntos));
-        const ganadores = jugadores.filter(j => j.puntos === maxPts);
-
-        const fondo = new Image();
-        fondo.src = 'inicio.jpeg'; 
-        fondo.onload = () => {
-            ctx.drawImage(fondo, 0, 0, 600, 400);
-            ctx.fillStyle = "rgba(0,0,0,0.6)";
-            ctx.fillRect(0,0,600,400);
-            
-            ganadores.forEach((g, i) => {
-                const img = new Image();
-                img.src = g.foto;
-                img.onload = () => {
-                    const x = (600 / (ganadores.length + 1)) * (i + 1) - 75;
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(x+75, 180, 75, 0, Math.PI*2);
-                    ctx.clip();
-                    ctx.drawImage(img, x, 105, 150, 150);
-                    ctx.restore();
-                    
-                    ctx.font = "60px Arial";
-                    ctx.fillText("🏆", x + 105, 140);
-                    ctx.fillStyle = "white";
-                    ctx.font = "bold 28px Arial";
-                    ctx.textAlign = "center";
-                    ctx.fillText(g.nombre, x+75, 300);
-                    ctx.fillStyle = "#FFD700";
-                    ctx.fillText(g.puntos + " PUNTOS", x+75, 340);
-                };
-            });
-        };
+        cont.innerHTML = `
+            <h2 style="color:var(--gold)">🥇 LÍDERES</h2>
+            <div class="ganadores-container">${ganadores.map(g => `<div class="ganador-ronda-box"><div class="medalla">🥇</div><img src="${g.foto}" class="foto-ganador"><div>${g.nombre}</div></div>`).join('')}</div>
+            <div class="wanted-container"><img src="${culpable.foto}" class="wanted-photo"><b>${culpable.nombre}</b></div>
+            <div class="card">
+                <p><b>PUNTOS:</b> ${jugadores.map(j=>j.nombre+":"+j.puntos).join(" | ")}</p>
+                <button class="btn" onclick="iniciarJuego()">OTRA RONDA 🔄</button>
+                <button class="btn" style="background:#444" onclick="location.reload()">NUEVOS JUGADORES</button>
+            </div>`;
     }
 </script>
 </body>
 </html>
-
-
-
