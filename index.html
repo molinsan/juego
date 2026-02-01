@@ -31,18 +31,16 @@
 <body>
 
 <div id="s1" class="screen active">
-    <h1 style="color:var(--s); margin-bottom:5px;">🏰 Proyecto Andalucía</h1>
+    <h1 style="color:var(--s)">🏰 Proyecto Andalucía</h1>
     <div id="lista-jugadores"></div>
     <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:12px; border-radius:10px; width:70%; border:none; margin-bottom:10px;">
     <button class="btn" style="background:var(--s); color:black" onclick="abrirCamara()">📸 AÑADIR JUGADOR</button>
-    
     <select id="select-nivel" style="padding:12px; width:85%; border-radius:10px; margin:10px 0;">
         <option value="exp">🍼 Exploradores (4-8 años)</option>
         <option value="jun">🎒 Junior (9-15 años)</option>
         <option value="ado">📱 Adolescente (16-17 años)</option>
         <option value="adu">🍷 Adultos (+18 años)</option>
     </select>
-    
     <button class="btn" onclick="iniciarJuego()">¡EMPEZAR PARTIDA! 🚀</button>
 </div>
 
@@ -54,29 +52,31 @@
 <div id="s2" class="screen">
     <div id="tap-card" class="card" onclick="revelarPalabra()">
         <h2 id="turno-de"></h2>
-        <p>TOCA PARA VER TU SECRETO</p>
+        <p>TOCA PARA VER TU PALABRA</p>
     </div>
     <div id="info-card" class="card" style="display:none">
         <h3 id="msg-rol"></h3>
         <div id="box-imagen" class="emoji-display"></div>
         <h2 id="v-palabra" style="color:var(--p)"></h2>
-        <button class="btn" onclick="terminarTurno()">LISTO ✅</button>
+        <p style="font-size:0.9rem">No dejes que nadie lo vea...</p>
+        <button class="btn" onclick="terminarTurnoReparto()">LISTO ✅</button>
     </div>
 </div>
 
 <div id="s-misiones" class="screen">
     <div class="card">
-        <h2 id="mision-jugador-nombre"></h2>
+        <h2 id="mision-jugador-nombre" style="color:var(--p)"></h2>
         <p>Tu forma de actuar es:</p>
         <div class="modo-box" id="mision-texto"></div>
-        <button class="btn" onclick="siguienteMision()">¡HECHO! ▶️</button>
+        <p style="font-size:0.8rem">¡Representa tu palabra ahora!</p>
+        <button class="btn" onclick="siguienteMision()">MÍMICA TERMINADA ▶️</button>
     </div>
 </div>
 
 <div id="s-voto" class="screen">
     <div class="card">
         <h2 id="votante-nombre" style="color:var(--p)"></h2>
-        <p>Vota: ¿Quién es el espía?</p>
+        <p>¿Quién es el espía?</p>
         <div id="botones-voto"></div>
     </div>
 </div>
@@ -96,18 +96,10 @@
 
 <script>
     const db = {
-        exp: [
-            {p:"LEÓN",e:"🦁"},{p:"GATO",e:"🐱"},{p:"PERRO",e:"🐶"},{p:"PATO",e:"🦆"},{p:"SAPO",e:"🐸"},{p:"CONEJO",e:"🐰"},{p:"MONO",e:"🐵"},{p:"CERDO",e:"🐷"},{p:"ELEFANTE",e:"🐘"},{p:"JIRAFA",e:"🦒"},{p:"SOL",e:"☀️"},{p:"LUNA",e:"🌙"},{p:"LLUVIA",e:"🌧️"},{p:"PELOTA",e:"⚽"},{p:"BICICLETA",e:"🚲"},{p:"TREN",e:"🚂"},{p:"AVIÓN",e:"✈️"},{p:"BARCO",e:"🚢"},{p:"HELADO",e:"🍦"},{p:"MANZANA",e:"🍎"},{p:"PLÁTANO",e:"🍌"},{p:"FLOR",e:"🌸"},{p:"ÁRBOL",e:"🌳"},{p:"CASA",e:"🏠"},{p:"COCHE",e:"🚗"},{p:"MUÑECA",e:"🪆"},{p:"DORMIR",e:"😴"},{p:"COMER",e:"🍕"},{p:"BEBER",e:"🥤"},{p:"LLORAR",e:"😢"},{p:"REIR",e:"😂"},{p:"NADAR",e:"🏊"},{p:"CORRER",e:"🏃"},{p:"SALTAR",e:"🦘"},{p:"BAILAR",e:"💃"},{p:"PINTAR",e:"🎨"},{p:"ZAPATOS",e:"👟"},{p:"SOMBRERO",e:"👒"},{p:"GAFAS",e:"👓"},{p:"RELOJ",e:"⌚"},{p:"PEZ",e:"🐟"},{p:"PÁJARO",e:"🐦"},{p:"MARIPOSA",e:"🦋"},{p:"ARAÑA",e:"🕷️"},{p:"LIBRO",e:"📖"},{p:"TELE",e:"📺"},{p:"CEPILLO",e:"🪥"},{p:"DULCE",e:"🍭"},{p:"REGALO",e:"🎁"},{p:"FIESTA",e:"🥳"}
-        ],
-        jun: [
-            {p:"POLICÍA",e:"👮"},{p:"BOMBERO",e:"👨‍🚒"},{p:"CHEF",e:"👨‍🍳"},{p:"MÉDICO",e:"👨‍⚕️"},{p:"PROFESOR",e:"👨‍🏫"},{p:"ASTRONAUTA",e:"👨‍🚀"},{p:"PIRATA",e:"🏴‍☠️"},{p:"MAGO",e:"🧙"},{p:"SUPERHÉROE",e:"🦸"},{p:"ZOMBI",e:"🧟"},{p:"FUTBOLISTA",e:"⚽"},{p:"TENISTA",e:"🎾"},{p:"GUITARRA",e:"🎸"},{p:"PIANO",e:"🎹"},{p:"CÁMARA",e:"📷"},{p:"ORDENADOR",e:"💻"},{p:"HAMBURGUESA",e:"🍔"},{p:"SUSHI",e:"🍣"},{p:"DINOSAURIO",e:"🦖"},{p:"DRAGÓN",e:"🐉"},{p:"ROBOT",e:"🤖"},{p:"CIENTÍFICO",e:"🧪"},{p:"DETECTIVE",e:"🕵️"},{p:"EXPLORADOR",e:"🤠"},{p:"ESQUIAR",e:"⛷️"},{p:"SURF",e:"🏄"},{p:"SKATE",e:"🛹"},{p:"VIDEOJUEGOS",e:"🎮"},{p:"CINE",e:"🎬"},{p:"MOCHILA",e:"🎒"},{p:"DINERO",e:"💰"},{p:"LLAVE",e:"🔑"},{p:"TELÉFONO",e:"📱"},{p:"AURICULARES",e:"🎧"},{p:"MICRÓFONO",e:"🎤"},{p:"MAPA",e:"🗺️"},{p:"BRÚJULA",e:"🧭"},{p:"COHETE",e:"🚀"},{p:"TESORO",e:"💎"},{p:"CANTAR",e:"🎤"},{p:"PESCAR",e:"🎣"},{p:"BOXEO",e:"🥊"},{p:"ESGRIMA",e:"🤺"},{p:"BICICLETA",e:"🚲"},{p:"MOTOCICLETA",e:"🏍️"},{p:"TRACTOR",e:"🚜"},{p:"HELICÓPTERO",e:"🚁"},{p:"PARACAÍDAS",e:"🪂"},{p:"CAMPING",e:"⛺"},{p:"HOGUERA",e:"🔥"}
-        ],
-        ado: [
-            {p:"INFLUENCER",e:"🤳"},{p:"TIKTOK",e:"💃"},{p:"EXAMEN",e:"📝"},{p:"GRADUACIÓN",e:"🎓"},{p:"PRIMER BESO",e:"😘"},{p:"CONCIERTO",e:"🎸"},{p:"GIMNASIO",e:"🏋️"},{p:"MODA",e:"👗"},{p:"VIAJE",e:"✈️"},{p:"FIESTA",e:"🎉"},{p:"AMOR",e:"❤️"},{p:"DESAMOR",e:"💔"},{p:"SUEÑO",e:"😴"},{p:"TRABAJO",e:"💼"},{p:"COCHE NUEVO",e:"🏎️"},{p:"PIZZA",e:"🍕"},{p:"CAFÉ",e:"☕"},{p:"HAMBURGUESA",e:"🍔"},{p:"DORMIR",e:"💤"},{p:"MÚSICA",e:"🎧"},{p:"PELÍCULA",e:"🍿"},{p:"COMPRAS",e:"🛍️"},{p:"PLAYA",e:"🏖️"},{p:"MONTAÑA",e:"🏔️"},{p:"FOTO",e:"📸"},{p:"WHATSAPP",e:"💬"},{p:"ESTUDIAR",e:"📚"},{p:"VACACIONES",e:"🍹"},{p:"DEPORTE",e:"⛹️"},{p:"NATURALEZA",e:"🌿"},{p:"AMIGOS",e:"👫"},{p:"FAMILIA",e:"👨‍👩‍👧"},{p:"FUTURO",e:"🔮"},{p:"DINERO",e:"💸"},{p:"TIEMPO",e:"⏳"},{p:"LIBERTAD",e:"🕊️"},{p:"AVENTURA",e:"🧗"},{p:"YOUTUBER",e:"📺"},{p:"GAMER",e:"🖱️"},{p:"NETFLIX",e:"🍿"},{p:"SÁBADO",e:"🕺"},{p:"DOMINGO",e:"🛌"},{p:"LUNES",e:"😫"},{p:"VERANO",e:"☀️"},{p:"INVIERNO",e:"❄️"},{p:"CINE",e:"🎟️"},{p:"CONDUCIR",e:"🚗"},{p:"ESTRÉS",e:"🤯"},{p:"FELICIDAD",e:"😊"},{p:"SELFIE",e:"🤳"}
-        ],
-        adu: [
-            {p:"HIPOTECA",e:"🏠"},{p:"IMPUESTOS",e:"🧾"},{p:"TRABAJO",e:"💼"},{p:"REUNIÓN",e:"🤝"},{p:"ESTRÉS",e:"😫"},{p:"CAFÉ",e:"☕"},{p:"VINO",e:"🍷"},{p:"CERVEZA",e:"🍺"},{p:"BODA",e:"👰"},{p:"DIVORCIO",e:"💔"},{p:"HIJOS",e:"👶"},{p:"COMPRA",e:"🛒"},{p:"LIMPIEZA",e:"🧹"},{p:"COCINAR",e:"🍳"},{p:"VIAJE",e:"🌍"},{p:"JUBILACIÓN",e:"🏖️"},{p:"GIMNASIO",e:"💪"},{p:"DIETA",e:"🥗"},{p:"DOLOR ESPALDA",e:"👴"},{p:"RESACA",e:"🤢"},{p:"GASOLINA",e:"⛽"},{p:"FACTURA",e:"💸"},{p:"NETFLIX",e:"📺"},{p:"SUEÑO",e:"💤"},{p:"VACACIONES",e:"🍹"},{p:"POLÍTICA",e:"🏛️"},{p:"INVERSIÓN",e:"📈"},{p:"BANCO",e:"🏦"},{p:"MÓVIL",e:"📱"},{p:"INTERNET",e:"🌐"},{p:"DORMIR",e:"🛌"},{p:"RELOJ",e:"⌚"},{p:"CENA",e:"🍽️"},{p:"FIESTA",e:"🕺"},{p:"AMOR",e:"💑"},{p:"SILENCIO",e:"🤫"},{p:"NATURALEZA",e:"🌲"},{p:"SALUD",e:"🍎"},{p:"DEPORTE",e:"🚴"},{p:"LECTURA",e:"📖"},{p:"MÚSICA",e:"🎼"},{p:"TEATRO",e:"🎭"},{p:"MUSEO",e:"🖼️"},{p:"CINE",e:"🍿"},{p:"BARRIO",e:"🏘️"},{p:"CIUDAD",e:"🏙️"},{p:"CAMPO",e:"🚜"},{p:"AVIÓN",e:"✈️"},{p:"CRUCERO",e:"🚢"},{p:"DESCANSO",e:"🧘"}
-        ]
+        exp: [{p:"LEÓN",e:"🦁"},{p:"GATO",e:"🐱"},{p:"PERRO",e:"🐶"},{p:"PATO",e:"🦆"},{p:"SAPO",e:"🐸"},{p:"CONEJO",e:"🐰"},{p:"MONO",e:"🐵"},{p:"CERDO",e:"🐷"},{p:"ELEFANTE",e:"🐘"},{p:"JIRAFA",e:"🦒"},{p:"SOL",e:"☀️"},{p:"LUNA",e:"🌙"},{p:"LLUVIA",e:"🌧️"},{p:"PELOTA",e:"⚽"},{p:"BICICLETA",e:"🚲"},{p:"TREN",e:"🚂"},{p:"AVIÓN",e:"✈️"},{p:"BARCO",e:"🚢"},{p:"HELADO",e:"🍦"},{p:"MANZANA",e:"🍎"},{p:"PLÁTANO",e:"🍌"},{p:"FLOR",e:"🌸"},{p:"ÁRBOL",e:"🌳"},{p:"CASA",e:"🏠"},{p:"COCHE",e:"🚗"},{p:"MUÑECA",e:"🪆"},{p:"DORMIR",e:"😴"},{p:"COMER",e:"🍕"},{p:"BEBER",e:"🥤"},{p:"LLORAR",e:"😢"},{p:"REIR",e:"😂"},{p:"NADAR",e:"🏊"},{p:"CORRER",e:"🏃"},{p:"SALTAR",e:"🦘"},{p:"BAILAR",e:"💃"},{p:"PINTAR",e:"🎨"},{p:"ZAPATOS",e:"👟"},{p:"SOMBRERO",e:"👒"},{p:"GAFAS",e:"👓"},{p:"RELOJ",e:"⌚"},{p:"PEZ",e:"🐟"},{p:"PÁJARO",e:"🐦"},{p:"MARIPOSA",e:"🦋"},{p:"ARAÑA",e:"🕷️"},{p:"LIBRO",e:"📖"},{p:"TELE",e:"📺"},{p:"CEPILLO",e:"🪥"},{p:"DULCE",e:"🍭"},{p:"REGALO",e:"🎁"},{p:"FIESTA",e:"🥳"}],
+        jun: [{p:"POLICÍA",e:"👮"},{p:"BOMBERO",e:"👨‍🚒"},{p:"CHEF",e:"👨‍🍳"},{p:"MÉDICO",e:"👨‍⚕️"},{p:"PROFESOR",e:"👨‍🏫"},{p:"ASTRONAUTA",e:"👨‍🚀"},{p:"PIRATA",e:"🏴‍☠️"},{p:"MAGO",e:"🧙"},{p:"SUPERHÉROE",e:"🦸"},{p:"ZOMBI",e:"🧟"},{p:"FUTBOLISTA",e:"⚽"},{p:"TENISTA",e:"🎾"},{p:"GUITARRA",e:"🎸"},{p:"PIANO",e:"🎹"},{p:"CÁMARA",e:"📷"},{p:"ORDENADOR",e:"💻"},{p:"HAMBURGUESA",e:"🍔"},{p:"SUSHI",e:"🍣"},{p:"DINOSAURIO",e:"🦖"},{p:"DRAGÓN",e:"🐉"},{p:"ROBOT",e:"🤖"},{p:"CIENTÍFICO",e:"🧪"},{p:"DETECTIVE",e:"🕵️"},{p:"EXPLORADOR",e:"🤠"},{p:"ESQUIAR",e:"⛷️"},{p:"SURF",e:"🏄"},{p:"SKATE",e:"🛹"},{p:"VIDEOJUEGOS",e:"🎮"},{p:"CINE",e:"🎬"},{p:"MOCHILA",e:"🎒"},{p:"DINERO",e:"💰"},{p:"LLAVE",e:"🔑"},{p:"TELÉFONO",e:"📱"},{p:"AURICULARES",e:"🎧"},{p:"MICRÓFONO",e:"🎤"},{p:"MAPA",e:"🗺️"},{p:"BRÚJULA",e:"🧭"},{p:"COHETE",e:"🚀"},{p:"TESORO",e:"💎"},{p:"CANTAR",e:"🎤"},{p:"PESCAR",e:"🎣"},{p:"BOXEO",e:"🥊"},{p:"ESGRIMA",e:"🤺"},{p:"BICICLETA",e:"🚲"},{p:"MOTOCICLETA",e:"🏍️"},{p:"TRACTOR",e:"🚜"},{p:"HELICÓPTERO",e:"🚁"},{p:"PARACAÍDAS",e:"🪂"},{p:"CAMPING",e:"⛺"},{p:"HOGUERA",e:"🔥"}],
+        ado: [{p:"INFLUENCER",e:"🤳"},{p:"TIKTOK",e:"💃"},{p:"EXAMEN",e:"📝"},{p:"GRADUACIÓN",e:"🎓"},{p:"PRIMER BESO",e:"😘"},{p:"CONCIERTO",e:"🎸"},{p:"GIMNASIO",e:"🏋️"},{p:"MODA",e:"👗"},{p:"VIAJE",e:"✈️"},{p:"FIESTA",e:"🎉"},{p:"AMOR",e:"❤️"},{p:"DESAMOR",e:"💔"},{p:"SUEÑO",e:"😴"},{p:"TRABAJO",e:"💼"},{p:"COCHE NUEVO",e:"🏎️"},{p:"PIZZA",e:"🍕"},{p:"CAFÉ",e:"☕"},{p:"HAMBURGUESA",e:"🍔"},{p:"DORMIR",e:"💤"},{p:"MÚSICA",e:"🎧"},{p:"PELÍCULA",e:"🍿"},{p:"COMPRAS",e:"🛍️"},{p:"PLAYA",e:"🏖️"},{p:"MONTAÑA",e:"🏔️"},{p:"FOTO",e:"📸"},{p:"WHATSAPP",e:"💬"},{p:"ESTUDIAR",e:"📚"},{p:"VACACIONES",e:"🍹"},{p:"DEPORTE",e:"⛹️"},{p:"NATURALEZA",e:"🌿"},{p:"AMIGOS",e:"👫"},{p:"FAMILIA",e:"👨‍👩‍👧"},{p:"FUTURO",e:"🔮"},{p:"DINERO",e:"💸"},{p:"TIEMPO",e:"⏳"},{p:"LIBERTAD",e:"🕊️"},{p:"AVENTURA",e:"🧗"},{p:"YOUTUBER",e:"📺"},{p:"GAMER",e:"🖱️"},{p:"NETFLIX",e:"🍿"},{p:"SÁBADO",e:"🕺"},{p:"DOMINGO",e:"🛌"},{p:"LUNES",e:"😫"},{p:"VERANO",e:"☀️"},{p:"INVIERNO",e:"❄️"},{p:"CINE",e:"🎟️"},{p:"CONDUCIR",e:"🚗"},{p:"ESTRÉS",e:"🤯"},{p:"FELICIDAD",e:"😊"},{p:"SELFIE",e:"🤳"}],
+        adu: [{p:"HIPOTECA",e:"🏠"},{p:"IMPUESTOS",e:"🧾"},{p:"TRABAJO",e:"💼"},{p:"REUNIÓN",e:"🤝"},{p:"ESTRÉS",e:"😫"},{p:"CAFÉ",e:"☕"},{p:"VINO",e:"🍷"},{p:"CERVEZA",e:"🍺"},{p:"BODA",e:"👰"},{p:"DIVORCIO",e:"💔"},{p:"HIJOS",e:"👶"},{p:"COMPRA",e:"🛒"},{p:"LIMPIEZA",e:"🧹"},{p:"COCINAR",e:"🍳"},{p:"VIAJE",e:"🌍"},{p:"JUBILACIÓN",e:"🏖️"},{p:"GIMNASIO",e:"💪"},{p:"DIETA",e:"🥗"},{p:"DOLOR ESPALDA",e:"👴"},{p:"RESACA",e:"🤢"},{p:"GASOLINA",e:"⛽"},{p:"FACTURA",e:"💸"},{p:"NETFLIX",e:"📺"},{p:"SUEÑO",e:"💤"},{p:"VACACIONES",e:"🍹"},{p:"POLÍTICA",e:"🏛️"},{p:"INVERSIÓN",e:"📈"},{p:"BANCO",e:"🏦"},{p:"MÓVIL",e:"📱"},{p:"INTERNET",e:"🌐"},{p:"DORMIR",e:"🛌"},{p:"RELOJ",e:"⌚"},{p:"CENA",e:"🍽️"},{p:"FIESTA",e:"🕺"},{p:"AMOR",e:"💑"},{p:"SILENCIO",e:"🤫"},{p:"NATURALEZA",e:"🌲"},{p:"SALUD",e:"🍎"},{p:"DEPORTE",e:"🚴"},{p:"LECTURA",e:"📖"},{p:"MÚSICA",e:"🎼"},{p:"TEATRO",e:"🎭"},{p:"MUSEO",e:"🖼️"},{p:"CINE",e:"🍿"},{p:"BARRIO",e:"🏘️"},{p:"CIUDAD",e:"🏙️"},{p:"CAMPO",e:"🚜"},{p:"AVIÓN",e:"✈️"},{p:"CRUCERO",e:"🚢"},{p:"DESCANSO",e:"🧘"}]
     };
     const listaMisiones = ["🐌 Cámara Lenta", "🔊 Haciendo Ruidos", "🖐️ Solo Manos", "🤖 Como un Robot", "👃 Con la Nariz", "💃 Bailando", "😴 Muy Cansado", "🦖 Como Dinosaurio", "🧟 Como Zombi", "🏃 Muy Rápido"];
 
@@ -153,22 +145,23 @@
             palabra: palabraObj.p,
             emoji: palabraObj.e,
             espiaIdx: Math.floor(Math.random()*jugadores.length),
-            turno: 0,
-            misionTurno: 0,
-            votanteIdx: 0,
+            turnoReparto: 0,
+            turnoMision: 0,
+            turnoVoto: 0,
             misionesAsignadas: jugadores.map((_, i) => misiones[i % misiones.length])
         };
-        mostrar('s2'); prepararTurno();
+        comenzarReparto();
     }
 
-    function prepararTurno() {
-        document.getElementById('turno-de').innerText = "TURNO: " + jugadores[partida.turno].nombre;
+    function comenzarReparto() {
+        document.getElementById('turno-de').innerText = "PARA: " + jugadores[partida.turnoReparto].nombre;
         document.getElementById('tap-card').style.display = "block";
         document.getElementById('info-card').style.display = "none";
+        mostrar('s2');
     }
 
     function revelarPalabra() {
-        const esEspia = (partida.turno === partida.espiaIdx);
+        const esEspia = (partida.turnoReparto === partida.espiaIdx);
         document.getElementById('tap-card').style.display = "none";
         document.getElementById('info-card').style.display = "block";
 
@@ -183,38 +176,49 @@
         }
     }
 
-    function terminarTurno() {
-        partida.turno++;
-        if(partida.turno < jugadores.length) prepararTurno();
-        else { partida.misionTurno = 0; mostrarMision(); }
+    function terminarTurnoReparto() {
+        partida.turnoReparto++;
+        if(partida.turnoReparto < jugadores.length) {
+            comenzarReparto();
+        } else {
+            comenzarMisiones();
+        }
     }
 
-    function mostrarMision() {
+    function comenzarMisiones() {
         mostrar('s-misiones');
-        const j = jugadores[partida.misionTurno];
-        document.getElementById('mision-jugador-nombre').innerText = "MÍMICA DE " + j.nombre;
-        document.getElementById('mision-texto').innerText = partida.misionesAsignadas[partida.misionTurno];
+        const j = jugadores[partida.turnoMision];
+        document.getElementById('mision-jugador-nombre').innerText = "TURNO DE " + j.nombre;
+        document.getElementById('mision-texto').innerText = partida.misionesAsignadas[partida.turnoMision];
     }
 
     function siguienteMision() {
-        partida.misionTurno++;
-        if(partida.misionTurno < jugadores.length) mostrarMision();
-        else { partida.votanteIdx = 0; mostrar('s-voto'); actualizarVotanteUI(); }
+        partida.turnoMision++;
+        if(partida.turnoMision < jugadores.length) {
+            comenzarMisiones();
+        } else {
+            comenzarVotacion();
+        }
+    }
+
+    function comenzarVotacion() {
+        mostrar('s-voto');
+        actualizarVotanteUI();
     }
 
     function actualizarVotanteUI() {
-        const votante = jugadores[partida.votanteIdx];
+        const votante = jugadores[partida.turnoVoto];
         document.getElementById('votante-nombre').innerText = votante.nombre + " VOTA:";
         const box = document.getElementById('botones-voto');
         box.innerHTML = "";
         jugadores.forEach((suspect, idx) => {
-            if(idx !== partida.votanteIdx) {
+            if(idx !== partida.turnoVoto) {
                 const b = document.createElement('button');
                 b.className = "btn"; b.innerText = suspect.nombre;
                 b.onclick = () => {
                     jugadores[idx].votos++;
-                    partida.votanteIdx++;
-                    if(partida.votanteIdx < jugadores.length) actualizarVotanteUI();
+                    partida.turnoVoto++;
+                    if(partida.turnoVoto < jugadores.length) actualizarVotanteUI();
                     else finalizar();
                 };
                 box.appendChild(b);
@@ -230,14 +234,13 @@
         const nombreEspia = jugadores[partida.espiaIdx].nombre;
         
         document.getElementById('resultado-final').innerHTML = esEspia ? 
-            "<h2>¡PILLADO! Era el espía 🕵️‍♂️</h2>" : 
-            `<h2>¡ERROR! Era inocente... 😱</h2><p>El espía era <b>${nombreEspia}</b></p>`;
+            "<h2 style='color:var(--s)'>¡PILLADO! Era el espía 🕵️‍♂️</h2>" : 
+            `<h2 style='color:red'>¡FALLASTEIS! Era inocente... 😱</h2><p>El espía real era <b>${nombreEspia}</b></p>`;
         mostrar('s-wanted');
     }
 </script>
 </body>
 </html>
-
 
 
 
