@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espía en Jaén - Edición 2026</title>
+    <title>Espía en Jaén - Edición Final</title>
     <style>
         :root { --p: #2E7D32; --s: #81C784; --gold: #FFD700; --red: #d32f2f; --dark: #0b1a2a; }
         body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; height: 100vh; overflow-x: hidden; }
@@ -17,6 +17,7 @@
         .cat-btn { background: #333; padding: 8px; border-radius: 10px; font-size: 0.75rem; border: 2px solid transparent; cursor: pointer; color: white; }
         .cat-btn.selected { background: var(--p); border-color: var(--gold); }
         .cat-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+        .cat-btn span { display: block; font-size: 0.6rem; opacity: 0.7; }
 
         .avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 5px; background: rgba(255,255,255,0.05); border-radius: 10px; }
         .av-item { font-size: 1.3rem; cursor: pointer; border-radius: 5px; border: 2px solid transparent; }
@@ -57,10 +58,10 @@
         </div>
 
         <div class="cat-grid" id="cat-container">
-            <div class="cat-btn" id="cat-infantil" onclick="fijarCat('infantil')">👶 Infantil</div>
-            <div class="cat-btn" id="cat-junior" onclick="fijarCat('junior')">🎮 Junior</div>
-            <div class="cat-btn" id="cat-adolescente" onclick="fijarCat('adolescente')">📱 Adolescente</div>
-            <div class="cat-btn" id="cat-adulto" onclick="fijarCat('adulto')">🍺 Adulto</div>
+            <div class="cat-btn" id="cat-infantil" onclick="fijarCat('infantil')">👶 Infantil <span>(4-6 años)</span></div>
+            <div class="cat-btn" id="cat-junior" onclick="fijarCat('junior')">🎮 Junior <span>(7-12 años)</span></div>
+            <div class="cat-btn" id="cat-adolescente" onclick="fijarCat('adolescente')">📱 Adolescente <span>(13-17 años)</span></div>
+            <div class="cat-btn" id="cat-adulto" onclick="fijarCat('adulto')">🍺 Adulto <span>(+18 años)</span></div>
         </div>
 
         <div style="display:flex; gap:5px;">
@@ -76,22 +77,37 @@
     <button class="btn" onclick="capturarFoto()" style="background:white; color:black; border-radius:50%; width:70px; height:70px; margin-top:15px;">📸</button>
 </div>
 
-<div id="s-retos" class="screen"></div>
+<div id="s-retos" class="screen">
+    <div class="main-card" style="background:white; color:#333">
+        <h3>🎯 Retos de Pistas</h3>
+        <div id="grid-retos" style="display:grid; grid-template-columns:repeat(5,1fr); gap:5px"></div>
+        <button class="btn" style="background:var(--p); color:white; margin-top:10px" onclick="comenzarPartida()">¡A JUGAR!</button>
+    </div>
+</div>
+
 <div id="s-game" class="screen"></div>
 
 <script>
-    // Palabras y Lógica
+    // Configuración y Palabras
     const niveles = {
-        infantil: [{p:"SOL ☀️", s:"LUNA 🌙"}, {p:"PERRO 🐶", s:"LOBO 🐺"}, {p:"PEZ 🐟", s:"RANA 🐸"}],
-        junior: [{p:"PIZZA", s:"PASTA"}],
+        infantil: [{p:"SOL ☀️", s:"LUNA 🌙"}, {p:"PERRO 🐶", s:"LOBO 🐺"}, {p:"GATO 🐱", s:"TIGRE 🐯"}],
+        junior: [{p:"PIZZA", s:"HAMBURGUESA"}],
         adolescente: [{p:"TIKTOK", s:"REELS"}],
         adulto: [{p:"ACEITE", s:"VINO"}]
     };
 
-    // Auto-relleno a 100 para demo
+    // Relleno a 100
     for(let n in niveles) while(niveles[n].length < 100) niveles[n].push({p: niveles[n][0].p + niveles[n].length, s: niveles[n][0].s});
 
+    const poolRetos = [{t:"MÍMICA",i:"🤸"},{t:"DIBUJO",i:"🎨"},{t:"SONIDOS",i:"🐶"},{t:"BAILE",i:"💃"},{t:"ROBOT",i:"🤖"},{t:"CANTO",i:"🎤"},{t:"1 PALABRA",i:"🗣️"},{t:"ESTATUA",i:"🗿"},{t:"AIRE",i:"💨"},{t:"SUSURRO",i:"🤫"}];
+
     let jugadores=[], categoria='', catFijada=false, avatarActivo='🌈', stream;
+
+    // Render Retos
+    const gr = document.getElementById('grid-retos');
+    poolRetos.forEach((r,i) => {
+        gr.innerHTML += `<div id="r-${i}" onclick="this.classList.toggle('disabled')" style="cursor:pointer; font-size:1.2rem; background:#eee; padding:5px; border-radius:10px">${r.i}</div>`;
+    });
 
     function fijarCat(c) {
         if(catFijada) return;
@@ -108,7 +124,7 @@
     }
 
     async function iniciarCamara() {
-        if(!categoria) return alert("Elige primero el nivel");
+        if(!categoria) return alert("Elige nivel primero");
         try {
             stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
             document.getElementById('v').srcObject = stream;
@@ -126,7 +142,7 @@
     }
 
     function usarAvatar() {
-        if(!categoria) return alert("Elige primero el nivel");
+        if(!categoria) return alert("Elige nivel primero");
         const col = document.getElementById('avatar-color').value;
         const c = document.createElement('canvas'); c.width=200; c.height=200;
         const ctx = c.getContext('2d');
@@ -147,8 +163,8 @@
         document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
-
-    // El resto de la lógica de juego permanece igual...
+    
+    // Aquí continuaría la lógica de comenzarPartida(), revelar() y finVoto() con el marco Wanted
 </script>
 </body>
 </html>
