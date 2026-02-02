@@ -22,41 +22,31 @@
         .avatar-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px; margin: 10px 0; border: 1px solid var(--s); }
         .avatar-select { width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
 
+        /* NIVELES */
         .cat-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0; }
         .cat-btn { background: #444; padding: 10px; border-radius: 12px; width: 45%; font-size: 0.8rem; border: 2px solid transparent; cursor: pointer; color: white; }
         .cat-btn.selected { background: var(--p); border-color: var(--gold); }
         .cat-btn span { display: block; font-size: 0.6rem; opacity: 0.8; }
 
-        .grid-retos { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; width: 100%; }
-        .reto-item { background: #eee; padding: 10px; border-radius: 15px; color: #333; cursor: pointer; position: relative; border: 2px solid transparent; font-size: 0.8rem; }
+        /* CONFIGURACIÓN DE RETOS (SISTEMA DE TACHADO) */
+        .grid-retos { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px; width: 100%; margin: 15px 0; }
+        .reto-item { background: #eee; padding: 10px; border-radius: 15px; color: #333; cursor: pointer; position: relative; border: 2px solid transparent; font-size: 0.8rem; transition: 0.3s; }
         .reto-item.selected { border-color: var(--p); background: var(--s); color: white; }
+        .reto-item:not(.selected) { opacity: 0.6; background: #ddd; }
         .reto-item:not(.selected)::after {
             content: "✕"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,0,0,0.3); color: var(--red); font-size: 2.5rem;
+            background: rgba(255,0,0,0.2); color: var(--red); font-size: 2.5rem;
             display: flex; align-items: center; justify-content: center; border-radius: 15px; font-weight: bold;
         }
 
-        .wanted-card {
-            background: var(--paper); padding: 30px; border: 12px solid #5d4037; color: #3d2b1f;
-            width: 280px; box-shadow: 0 0 50px black; transform: rotate(-1deg);
-        }
+        /* WANTED Y PODIO */
+        .wanted-card { background: var(--paper); padding: 30px; border: 12px solid #5d4037; color: #3d2b1f; width: 280px; transform: rotate(-1deg); }
         .wanted-img { width: 100%; border: 4px solid #3d2b1f; margin: 15px 0; background: white; }
-
-        .podio-frame {
-            position: relative; background: linear-gradient(135deg, #1a2a3a, #050a0f);
-            border: 4px solid var(--gold); border-radius: 30px; padding: 40px 10px;
-            width: 95%; max-width: 800px; display: flex; flex-direction: column; align-items: center; overflow: hidden;
-        }
+        .podio-frame { position: relative; background: linear-gradient(135deg, #1a2a3a, #050a0f); border: 4px solid var(--gold); border-radius: 30px; padding: 40px 10px; width: 95%; max-width: 800px; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         .lagarto-bg { position: absolute; bottom: -20px; right: -40px; font-size: 20rem; z-index: 0; opacity: 0.25; transform: rotate(-15deg); pointer-events: none; }
-        
-        .cromo-pro {
-            background: rgba(255,255,255,0.05); border: 2px solid var(--gold); border-radius: 15px;
-            padding: 12px; width: 130px; position: relative; z-index: 2; margin: 8px;
-        }
-        .cromo-img { width: 100%; height: 120px; object-fit: contain; border-radius: 10px; background: white; border: 2px solid var(--gold); }
+        .cromo-pro { background: rgba(255,255,255,0.05); border: 2px solid var(--gold); border-radius: 15px; padding: 12px; width: 130px; position: relative; z-index: 2; margin: 8px; }
+        .cromo-img { width: 100%; height: 120px; object-fit: contain; border-radius: 10px; background: white; }
         .acc-icon { position: absolute; top: 5px; left: 5px; font-size: 1.8rem; z-index: 5; }
-        .gift-icon { position: absolute; top: -15px; right: -15px; font-size: 2.5rem; animation: bounce 2s infinite; z-index: 10; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         footer { font-size: 0.7rem; padding: 20px; background: rgba(0,0,0,0.9); width: 100%; border-top: 2px solid var(--gold); margin-top: auto; }
     </style>
@@ -86,6 +76,9 @@
             <div style="font-size:0.8rem;">Color Fondo: <input type="color" id="avatar-color" value="#ffffff"></div>
         </div>
 
+        <p style="margin: 10px 0 2px; font-weight: bold; color: var(--gold);">Nivel de Dificultad:</p>
+        <p style="margin: 0 0 10px; font-size: 0.7rem; color: #ccc;">(Elige el de la edad del menor participante)</p>
+        
         <div class="cat-container">
             <div class="cat-btn selected" id="cat-infantil" onclick="selCat('infantil')">👶 Infantil <span>(4-6 años)</span></div>
             <div class="cat-btn" id="cat-junior" onclick="selCat('junior')">🎮 Junior <span>(7-12 años)</span></div>
@@ -99,17 +92,18 @@
     </div>
 </div>
 
+<div id="s-retos" class="screen">
+    <div class="card">
+        <h3>🎯 Maneras de dar las pistas</h3>
+        <p style="font-size:0.75rem; color:#666;">Selecciona los retos que quieres incluir. Los que tengan la cruz roja no aparecerán durante el juego.</p>
+        <div class="grid-retos" id="grid-retos"></div>
+        <button class="btn" style="background:var(--p); margin-top:10px;" onclick="comenzarPartida()">¡EMPEZAR PARTIDA!</button>
+    </div>
+</div>
+
 <div id="s-cam" class="screen" style="background:black;">
     <video id="v" style="width:100%; max-width:400px; border-radius:20px; transform: scaleX(-1);" autoplay playsinline></video>
     <button class="btn" onclick="capturarFoto()" style="background:white; color:black; border-radius:50%; width:80px; height:80px; font-size:2rem; margin-top:20px;">📸</button>
-</div>
-
-<div id="s-retos" class="screen">
-    <div class="card">
-        <h3>🎯 Configura los Retos</h3>
-        <div class="grid-retos" id="grid-retos"></div>
-        <button class="btn" style="background:var(--p); margin-top:20px;" onclick="comenzarPartida()">¡EMPEZAR!</button>
-    </div>
 </div>
 
 <div id="s-game" class="screen"></div>
@@ -130,22 +124,40 @@
 </footer>
 
 <script>
-    // 100 EJEMPLOS POR CATEGORÍA (Resumen de estructura para el código)
+    // 10 OPCIONES DE RETOS
+    const poolRetos = [
+        {t:"MÍMICA",i:"🤸"}, {t:"DIBUJO",i:"🎨"}, {t:"SONIDOS",i:"🐶"}, 
+        {t:"BAILE",i:"💃"}, {t:"ROBOT",i:"🤖"}, {t:"CANTO",i:"🎤"},
+        {t:"1 PALABRA",i:"🗣️"}, {t:"ESTATUA",i:"🗿"}, {t:"DIBUJO AIRE",i:"💨"}, {t:"SUSURRO",i:"🤫"}
+    ];
+
     const niveles = {
-        infantil: Array.from({length: 100}, (_, i) => ({p: ["PERRO","GATO","SOL","LUNA","AVION","TREN","LEON","PEZ"][i%8], e:"🐶", s:"🐱"})),
-        junior: Array.from({length: 100}, (_, i) => ({p: ["MINECRAFT","FUTBOL","PIZZA","TABLET","COLEGIO","YOUTUBE"][i%6], e:"🎮", s:"🧱"})),
-        adolescente: Array.from({length: 100}, (_, i) => ({p: ["INSTAGRAM","TIKTOK","EXAMEN","FIESTA","GYM","WIFI"][i%6], e:"📱", s:"🎥"})),
-        adulto: Array.from({length: 100}, (_, i) => ({p: ["ACEITE","HIPOTECA","TRABAJO","CERVEZA","POLITICA","BODA"][i%6], e:"🏺", s:"🍷"}))
+        infantil: Array.from({length: 100}, (_, i) => ({p: ["PERRO","SOL","CRAYÓN","LUNA","GATO","PÁJARO"][i%6], e:"🐶", s:"🐱"})),
+        junior: Array.from({length: 100}, (_, i) => ({p: ["MINECRAFT","PIZZA","MONOPOLY","ESPÍA"][i%4], e:"🎮", s:"🧱"})),
+        adolescente: Array.from({length: 100}, (_, i) => ({p: ["TIKTOK","NETFLIX","EXAMEN","INSTAGRAM"][i%4], e:"📱", s:"🎥"})),
+        adulto: Array.from({length: 100}, (_, i) => ({p: ["ACEITE","HIPOTECA","CATEDRAL","TAPA"][i%4], e:"🏺", s:"🍷"}))
     };
 
-    const poolRetos = [{t:"MÍMICA",i:"🤸"},{t:"DIBUJO",i:"🎨"},{t:"SONIDOS",i:"🐶"},{t:"BAILE",i:"💃"}];
-    const pueblos = [{n:"Bailén",c:"Heroica"},{n:"Úbeda",c:"Renacimiento"},{n:"Jaén",c:"Santo Rostro"}];
+    let jugadores=[], retosSeleccionados=[...poolRetos], categoria='infantil', stream, partida={};
 
-    let jugadores=[], retosActivos=[...poolRetos], categoria='infantil', stream, partida={};
-
-    // Render Retos
+    // RENDERIZAR LOS 10 RETOS CON SISTEMA DE CLICK PARA TACHADO
     const grid=document.getElementById('grid-retos');
-    poolRetos.forEach((r,i)=> grid.innerHTML+=`<div class="reto-item selected" id="r-${i}">${r.i}<br>${r.t}</div>`);
+    poolRetos.forEach((r,i)=> {
+        grid.innerHTML+=`<div class="reto-item selected" id="r-${i}" onclick="toggleReto(${i})"><span>${r.i}</span><br>${r.t}</div>`;
+    });
+
+    function toggleReto(i) {
+        const el = document.getElementById(`r-${i}`);
+        const reto = poolRetos[i];
+        if(el.classList.contains('selected')) {
+            if(retosSeleccionados.length <= 1) return alert("Debes dejar al menos un reto activo.");
+            el.classList.remove('selected');
+            retosSeleccionados = retosSeleccionados.filter(r => r.t !== reto.t);
+        } else {
+            el.classList.add('selected');
+            retosSeleccionados.push(reto);
+        }
+    }
 
     function selCat(c){
         categoria = c;
@@ -186,15 +198,16 @@
     function addJ(img){
         const n=document.getElementById('in-nombre').value.toUpperCase() || "JUGADOR";
         let acc=""; if(n.includes("PE"))acc="🌈"; else if(n.includes("HACHE"))acc="👮"; else if(n.includes("JOTA"))acc="👨‍🚒";
-        jugadores.push({nombre:n, foto:img, puntos:0, medallas:[], acc});
-        document.getElementById('lista-previa').innerHTML+=`<img src="${img}" style="width:40px;height:40px;border-radius:50%;margin:5px;background:white;">`;
+        jugadores.push({nombre:n, foto:img, puntos:0, acc});
+        document.getElementById('lista-previa').innerHTML+=`<img src="${img}" style="width:40px;height:40px;border-radius:50%;margin:5px;background:white;border:2px solid var(--s);">`;
         if(jugadores.length>=3) document.getElementById('btn-next').style.display="block";
     }
 
     function comenzarPartida(){
         let pool = niveles[categoria];
         let pObj = pool[Math.floor(Math.random()*pool.length)];
-        jugadores.forEach(j=> j.retoActual = poolRetos[Math.floor(Math.random()*poolRetos.length)]);
+        // Asignar un reto aleatorio SOLO de los seleccionados por el usuario
+        jugadores.forEach(j=> j.retoActual = retosSeleccionados[Math.floor(Math.random()*retosSeleccionados.length)]);
         partida = { palabra: pObj, espiaIdx: Math.floor(Math.random()*jugadores.length), turno:0 };
         verTurno();
     }
@@ -202,7 +215,7 @@
     function verTurno(){
         mostrar('s-game');
         const j = jugadores[partida.turno];
-        document.getElementById('s-game').innerHTML = `<div class="card" onclick="revelar()"><h1>${j.nombre}</h1><p>VER SECRETO</p></div>`;
+        document.getElementById('s-game').innerHTML = `<div class="card" onclick="revelar()"><h1>${j.nombre}</h1><p>VER TU SECRETO</p></div>`;
     }
 
     function revelar(){
@@ -210,8 +223,8 @@
         document.getElementById('s-game').innerHTML = `
             <div class="card" style="border:8px solid ${esE?'var(--red)':'var(--p)'}">
                 <h1>${esE?'ERES EL ESPÍA':partida.palabra.p}</h1>
-                <p>RETO: ${j.retoActual.t} ${j.retoActual.i}</p>
-                <button class="btn" style="background:var(--p)" onclick="nextT()">OK</button>
+                <p>Pista por: <b>${j.retoActual.t} ${j.retoActual.i}</b></p>
+                <button class="btn" style="background:var(--p)" onclick="nextT()">ENTENDIDO</button>
             </div>`;
     }
 
@@ -245,7 +258,7 @@
     }
 
     function fin(idx){
-        const esE = (idx === partida.espiaIdx), p = pueblos[Math.floor(Math.random()*pueblos.length)];
+        const esE = (idx === partida.espiaIdx);
         if(esE) jugadores.forEach((j,i)=> { if(i!==idx) j.puntos+=10; });
         else jugadores[partida.espiaIdx].puntos+=20;
         verPodio();
