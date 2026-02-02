@@ -3,175 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Podio de Jaén - Proyecto Ciudades de Andalucía</title>
+    <title>Espía en Jaén - Edición Avatares 2026</title>
     <style>
         :root { 
-            --gold-grad: linear-gradient(180deg, #FFD700 0%, #B8860B 100%);
-            --dark-blue: #0f172a; --card-bg: rgba(255, 255, 255, 0.1);
+            --p: #2E7D32; --s: #81C784; --gold: #FFD700; --red: #d32f2f; 
+            --paper: #f4e4bc; --dark: #0b1a2a; --wsp: #25D366;
+            --avatar-bg: #ffffff;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark-blue); color: white; margin: 0; text-align: center; }
-        .screen { display: none; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-        .active { display: flex; }
-
-        /* ESTILO PODIO IMAGEN */
-        .podio-container {
-            background: rgba(255,255,255,0.05);
-            border: 3px solid #B8860B;
-            border-radius: 40px;
-            padding: 40px 20px;
-            position: relative;
-            width: 95%;
-            max-width: 900px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .gold-card {
-            background: var(--card-bg);
-            border: 2px solid #FFD700;
-            border-radius: 20px;
-            width: 160px;
-            padding: 10px;
-            position: relative;
-            overflow: visible;
-        }
-
-        .photo-frame {
-            width: 100%;
-            height: 160px;
-            background: white;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-
-        .name-banner {
-            background: var(--gold-grad);
-            color: black;
-            font-weight: bold;
-            padding: 5px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-size: 1.1rem;
-        }
-
-        .points-box { color: #FFD700; font-weight: bold; margin: 5px 0; }
-
-        .town-tags { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        .tag { background: rgba(255,255,255,0.2); border-radius: 5px; font-size: 0.65rem; padding: 3px; }
-
-        /* DECORACIÓN */
-        .rainbow-decor { position: absolute; top: -40px; left: 50%; width: 80px; transform: translateX(-50%); z-index: 5; }
-        .lagarto-bg { position: absolute; right: -50px; bottom: -30px; width: 300px; opacity: 0.6; pointer-events: none; z-index: -1; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; overflow-x: hidden; }
         
-        .btn-action { padding: 15px 30px; border-radius: 30px; font-weight: bold; cursor: pointer; border: none; margin: 10px; }
-        .btn-reiniciar { background: #333; color: white; }
-        .btn-colorear { background: white; color: black; }
+        .screen { display: none; flex-direction: column; justify-content: center; align-items: center; padding: 20px; min-height: 100vh; box-sizing: border-box; }
+        .active { display: flex; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* REUTILIZABLES */
-        .btn-main { background: #2E7D32; color: white; padding: 15px; border-radius: 15px; border: none; width: 80%; margin: 10px; font-weight: bold; }
+        .card { background: white; color: #333; padding: 20px; border-radius: 30px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .btn { border: none; padding: 16px; border-radius: 15px; font-size: 1rem; font-weight: bold; width: 95%; cursor: pointer; margin: 8px 0; color: white; }
+
+        /* AVATARES */
+        .avatar-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px; margin: 10px 0; border: 1px solid var(--s); }
+        .avatar-select { width: 100%; padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        .color-picker { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.8rem; }
+
+        .cat-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 15px 0; }
+        .cat-btn { background: #444; padding: 10px; border-radius: 12px; width: 45%; font-size: 0.8rem; border: 2px solid transparent; cursor: pointer; color: white; }
+        .cat-btn.selected { background: var(--p); border-color: var(--gold); }
+
+        .grid-retos { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; width: 100%; }
+        .reto-item { background: #eee; padding: 10px; border-radius: 15px; color: #333; cursor: pointer; position: relative; border: 2px solid transparent; font-size: 0.8rem; }
+        .reto-item.selected { border-color: var(--p); background: var(--s); color: white; }
+        .reto-item:not(.selected)::after { content: "✕"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,0,0,0.3); color: var(--red); font-size: 2.5rem; display: flex; align-items: center; justify-content: center; border-radius: 15px; }
+
+        .wanted-card { background: var(--paper); padding: 30px; border: 12px solid #5d4037; color: #3d2b1f; width: 280px; transform: rotate(-1deg); }
+        .wanted-img { width: 100%; border: 4px solid #3d2b1f; margin: 15px 0; background: white; }
+
+        .podio-frame { position: relative; background: linear-gradient(135deg, #1a2a3a, #050a0f); border: 4px solid var(--gold); border-radius: 30px; padding: 40px 10px; width: 95%; max-width: 800px; display: flex; flex-direction: column; align-items: center; }
+        .cromo-pro { background: rgba(255,255,255,0.05); border: 2px solid var(--gold); border-radius: 15px; padding: 12px; width: 130px; margin: 8px; position: relative; }
+        .cromo-img { width: 100%; height: 120px; object-fit: contain; border-radius: 10px; background: white; }
+        .acc-icon { position: absolute; top: 5px; left: 5px; font-size: 1.8rem; z-index: 5; }
+
+        footer { font-size: 0.7rem; padding: 20px; background: rgba(0,0,0,0.9); width: 100%; border-top: 2px solid var(--gold); margin-top: auto; }
     </style>
 </head>
 <body>
 
-<div id="s-setup" class="screen active">
-    <h1>🕵️‍♂️ Registro de Agentes</h1>
-    <input type="text" id="in-nombre" placeholder="Nombre..." style="padding:15px; border-radius:10px; width:80%;">
-    <button class="btn-main" onclick="addJugador()">➕ AÑADIR JUGADOR</button>
-    <div id="lista-jug" style="display:flex; gap:10px; margin-top:20px;"></div>
-    <button class="btn-main" id="btn-play" style="display:none; background:#B8860B;" onclick="finalizarJuego()">GENERAR PODIO FINAL 🏆</button>
-</div>
-
-<div id="s-podio" class="screen">
-    <h1 style="font-size: 2.5rem; color: #FFD700;">🏆 PODIO DE JAÉN</h1>
-    
-    <div class="podio-container">
-        <span style="position:absolute; right:10px; bottom:10px; font-size:15rem; opacity:0.3;">🦎</span>
+<div id="s1" class="screen active">
+    <div style="background: rgba(0,0,0,0.7); padding: 25px; border-radius: 40px; border: 2px solid var(--s); width: 90%; max-width: 450px;">
+        <h1>🕵️‍♂️ Espía en Jaén</h1>
+        <div id="lista-previa" style="display:flex; justify-content:center; flex-wrap:wrap; margin-bottom:10px;"></div>
         
-        <div id="cards-render" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center; z-index:2;"></div>
-    </div>
+        <input type="text" id="in-nombre" placeholder="Nombre (Pe, Hache, Jota...)" style="padding:15px; border-radius:15px; width:85%; margin:5px 0; border:none;">
+        
+        <div class="avatar-box">
+            <p style="margin:0 0 10px; font-size:0.9rem;">🎭 O Elige un Avatar:</p>
+            <select id="avatar-sel" class="avatar-select">
+                <option value="🌈">Pe Arcoíris</option>
+                <option value="👮">Hache Policía</option>
+                <option value="👨‍🚒">Jota Bombero</option>
+                <option value="🦎">Lince de Jaén</option>
+                <option value="🫒">Super-Oliva</option>
+                <option value="🕵️">Agente Incógnito</option>
+                <option value="🏍️">Hache Moto</option>
+                <option value="🚒">Jota Rescate</option>
+                <option value="🗺️">Pe Guía</option>
+                <option value="🤖">Dron Apoyo</option>
+            </select>
+            <div class="color-picker">
+                <span>Color Fondo:</span>
+                <input type="color" id="avatar-color" value="#ffffff">
+            </div>
+        </div>
 
-    <div style="margin-top: 30px;">
-        <button class="btn-action btn-reiniciar" onclick="location.reload()">REINICIAR</button>
-        <button class="btn-action btn-colorear">🖍️ COLOREAR</button>
-    </div>
+        <div class="cat-container">
+            <div class="cat-btn selected" id="cat-infantil" onclick="selCat('infantil')">👶 Infantil</div>
+            <div class="cat-btn" id="cat-junior" onclick="selCat('junior')">🎮 Junior</div>
+        </div>
 
-    <footer style="margin-top:auto; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.2); width:100%; padding:20px;">
-        Proyecto Ciudades de Andalucía | Jaén · Linares · Úbeda · Baeza · Andújar · Alcalá
-    </footer>
+        <button class="btn" style="background:var(--p);" onclick="iniciarCamara()">📸 USAR CÁMARA</button>
+        <button class="btn" style="background:#555;" onclick="usarAvatar()">👤 USAR AVATAR</button>
+        <button class="btn" id="btn-next" style="display:none; background:var(--gold); color:black;" onclick="mostrar('s-retos')">SIGUIENTE 🚀</button>
+    </div>
 </div>
+
+<div id="s-cam" class="screen" style="background:black;">
+    <video id="v" style="width:100%; max-width:400px; border-radius:20px; transform: scaleX(-1);" autoplay playsinline></video>
+    <button class="btn" onclick="capturarFoto()" style="background:white; color:black; border-radius:50%; width:80px; height:80px; font-size:2rem; margin-top:20px;">📸</button>
+</div>
+
+<div id="s-retos" class="screen"><div class="card"><h3>🎯 Retos</h3><div class="grid-retos" id="grid-retos"></div><button class="btn" style="background:var(--p); margin-top:20px;" onclick="comenzarPartida()">¡EMPEZAR!</button></div></div>
+<div id="s-game" class="screen"></div>
+<div id="s-podio" class="screen">
+    <h1 style="color:var(--gold);">👑 PODIO DE JAÉN</h1>
+    <div class="podio-frame">
+        <div id="final-team-photo" style="display:flex; flex-wrap:wrap; justify-content:center; width:100%;"></div>
+        <button class="btn" style="background:var(--wsp)" onclick="compartirWsp()">📲 WHATSAPP</button>
+        <button class="btn" style="background:white; color:black;" onclick="location.reload()">REINICIAR</button>
+    </div>
+</div>
+
+<footer>
+    <p>Proyecto Ciudades de Andalucía - Jaén</p>
+    <p>📧 molinsan.jl@gmail.com | <a href="https://paypal.me/7moli" style="color:var(--gold)">☕ Paypal: 7moli</a></p>
+</footer>
 
 <script>
-    let jugadores = [];
-    const pueblosDefault = [
-        ["Jaén", "Baeza"], ["Úbeda", "Andújar"], ["Linares", "Bailén"], ["Martos", "Alcalá"]
-    ];
+    const poolRetos = [{t:"MÍMICA",i:"🤸"},{t:"DIBUJO",i:"🎨"},{t:"SONIDOS",i:"🐶"},{t:"BAILE",i:"💃"}];
+    const pueblos = [{n:"Bailén",c:"¡Ciudad heroica!"},{n:"Úbeda",c:"Oro líquido."},{n:"Linares",c:"Ciudad minera."}];
+    const niveles = { infantil: [{p:"PERRO",e:"🐶",s:"🐱"}], junior: [{p:"FÚTBOL",e:"⚽",s:"🏀"}] };
 
-    function addJugador() {
-        const n = document.getElementById('in-nombre').value.toUpperCase();
-        if(!n) return;
+    let jugadores=[], retosActivos=[...poolRetos], categoria='infantil', stream;
+
+    // RENDER RETOS
+    const grid=document.getElementById('grid-retos');
+    poolRetos.forEach((r,i)=> grid.innerHTML+=`<div class="reto-item selected" id="r-${i}">${r.i}<br>${r.t}</div>`);
+
+    function selCat(c){ 
+        categoria = c; 
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+        document.getElementById('cat-'+c).classList.add('selected');
+    }
+
+    function mostrar(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+
+    async function iniciarCamara(){
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}});
+            document.getElementById('v').srcObject = stream;
+            mostrar('s-cam');
+        } catch(e){ alert("Cámara no disponible, usa Avatar"); }
+    }
+
+    function capturarFoto(){
+        const v=document.getElementById('v'), c=document.createElement('canvas');
+        c.width=400; c.height=400;
+        const ctx=c.getContext('2d'); ctx.translate(400,0); ctx.scale(-1,1); ctx.drawImage(v,0,0,400,400);
+        addJ(c.toDataURL(), false);
+        if(stream) stream.getTracks().forEach(t=>t.stop());
+        mostrar('s1');
+    }
+
+    function usarAvatar(){
+        const icon = document.getElementById('avatar-sel').value;
+        const color = document.getElementById('avatar-color').value;
+        // Crear un canvas con el emoji y el color de fondo
+        const c = document.createElement('canvas');
+        c.width=400; c.height=400;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = color;
+        ctx.fillRect(0,0,400,400);
+        ctx.font = "250px serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(icon, 200, 220);
+        addJ(c.toDataURL(), true);
+    }
+
+    function addJ(img, isAvatar){
+        const n=document.getElementById('in-nombre').value.toUpperCase() || "JUGADOR "+(jugadores.length+1);
+        let acc=""; 
+        if(n.includes("PE"))acc="🌈"; else if(n.includes("HACHE"))acc="👮"; else if(n.includes("JOTA"))acc="👨‍🚒";
         
-        // Crear avatar simple si no hay selfie (mantenemos lógica anterior)
-        const c = document.createElement('canvas'); c.width=200; c.height=200;
-        const ctx = c.getContext('2d'); ctx.fillStyle = "#eee"; ctx.fillRect(0,0,200,200);
-        ctx.font = "100px Arial"; ctx.textAlign="center"; ctx.fillText(n[0], 100, 130);
-
-        jugadores.push({
-            nombre: n,
-            foto: c.toDataURL(),
-            puntos: Math.floor(Math.random()*40),
-            pueblos: pueblosDefault[jugadores.length % pueblosDefault.length]
-        });
-
-        document.getElementById('lista-jug').innerHTML += `<img src="${c.toDataURL()}" style="width:50px; border-radius:50%;">`;
-        document.getElementById('in-nombre').value = "";
-        if(jugadores.length >= 2) document.getElementById('btn-play').style.display="block";
+        jugadores.push({nombre:n, foto:img, puntos:0, medallas:[], acc});
+        document.getElementById('lista-previa').innerHTML+=`<img src="${img}" style="width:50px;height:50px;border-radius:10px;margin:5px;border:2px solid var(--s);background:white;">`;
+        document.getElementById('in-nombre').value="";
+        if(jugadores.length>=3) document.getElementById('btn-next').style.display="block";
     }
 
-    function finalizarJuego() {
+    function comenzarPartida(){
+        let pObj = niveles[categoria][0];
+        jugadores.forEach(j=> j.retoActual = retosActivos[Math.floor(Math.random()*retosActivos.length)]);
+        partida = { palabra: pObj, espiaIdx: Math.floor(Math.random()*jugadores.length), turno:0 };
+        verTurno();
+    }
+
+    function verTurno(){
+        mostrar('s-game');
+        const j = jugadores[partida.turno];
+        document.getElementById('s-game').innerHTML = `<div class="card" onclick="revelar()"><h1>${j.nombre}</h1><p>TOCA PARA TU SECRETO</p></div>`;
+    }
+
+    function revelar(){
+        const j = jugadores[partida.turno], esE = (partida.turno===partida.espiaIdx);
+        document.getElementById('s-game').innerHTML = `<div class="card"><h2>${esE?'ERES ESPÍA':partida.palabra.p}</h2><p>RETO: ${j.retoActual.t} ${j.retoActual.i}</p><button class="btn" style="background:var(--p)" onclick="nextT()">OK</button></div>`;
+    }
+
+    function nextT(){
+        partida.turno++;
+        if(partida.turno < jugadores.length) verTurno();
+        else finalRonda();
+    }
+
+    function finalRonda(){
+        const p = pueblos[Math.floor(Math.random()*pueblos.length)];
+        jugadores.forEach(j=> { j.puntos+=10; j.medallas.push(p); });
         mostrar('s-podio');
-        const container = document.getElementById('cards-render');
-        container.innerHTML = "";
-
-        jugadores.sort((a,b) => b.puntos - a.puntos).forEach((j, index) => {
-            let decoracion = "";
-            let iconoExtra = "";
-            
-            // Lógica de personajes guardada
-            if(j.nombre.includes("PE")) {
-                decoracion = '<div class="rainbow-decor">🌈</div>';
-                iconoExtra = '<span style="position:absolute; top:5px; left:5px;">🌈</span>';
-            }
-            if(j.nombre.includes("HACHE")) {
-                iconoExtra = '<span style="position:absolute; top:5px; right:5px; font-size:1.5rem;">👮</span>';
-            }
-            if(j.nombre.includes("JOTA")) {
-                iconoExtra = '<span style="position:absolute; top:-15px; right:-10px; font-size:2rem;">👨‍🚒</span>';
-            }
-
-            container.innerHTML += `
-                <div class="gold-card">
-                    ${decoracion}
-                    <div style="position:relative">
-                        <img src="${j.foto}" class="photo-frame">
-                        ${iconoExtra}
-                    </div>
-                    <div class="name-banner">${j.nombre}</div>
-                    <div class="points-box">${j.puntos} PTS</div>
-                    <div class="town-tags">
-                        <div class="tag">${j.pueblos[0]}</div>
-                        <div class="tag">${j.pueblos[1]}</div>
-                    </div>
-                </div>
-            `;
-        });
+        verPodio();
     }
 
-    function mostrar(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+    function verPodio(){
+        document.getElementById('final-team-photo').innerHTML = jugadores.map(j=> `
+            <div class="cromo-pro">
+                ${j.acc ? `<div class="acc-icon">${j.acc}</div>` : ''}
+                <img src="${j.foto}" class="cromo-img">
+                <div><b>${j.nombre}</b></div>
+                <div style="color:var(--gold)">${j.puntos} PTS</div>
+            </div>`).join('');
+    }
+
+    function compartirWsp(){
+        window.open(`https://api.whatsapp.com/send?text=¡Jugando a Espías en Jaén!`, '_blank');
     }
 </script>
 </body>
