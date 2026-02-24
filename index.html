@@ -3,162 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Espía en Jaén - Edición Podio</title>
+    <title>Espía Moli&Cía</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root { --p: #2E7D32; --s: #81C784; --gold: #FFD700; --dark: #0b1a2a; }
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; display: flex; flex-direction: column; }
-        .screen { display: none; flex-direction: column; align-items: center; padding: 10px; flex: 1; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; background: var(--dark); color: white; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        .screen { display: none; flex-direction: column; align-items: center; padding: 10px; flex: 1; width: 100%; box-sizing: border-box; }
         .active { display: flex; }
 
-        /* Estilo Tarjetas Podio (Imagen) */
-        .podio-container { background: rgba(255,255,255,0.05); border: 3px solid var(--gold); border-radius: 30px; padding: 20px; width: 95%; max-width: 600px; display: flex; justify-content: space-around; flex-wrap: wrap; position: relative; overflow: hidden; }
-        .lagarto-bg { position: absolute; right: -20px; bottom: -20px; font-size: 15rem; opacity: 0.4; z-index: 0; transform: rotate(-15deg); pointer-events: none; }
+        .podio-container { background: rgba(255,255,255,0.05); border: 4px solid var(--gold); border-radius: 30px; padding: 40px 10px; width: 95%; max-width: 600px; display: flex; justify-content: space-around; flex-wrap: wrap; position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(46, 125, 50, 0.4); }
+        .lagarto-bg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 28rem; opacity: 0.25; z-index: 0; pointer-events: none; filter: drop-shadow(0 0 20px var(--p)); }
         
-        .card-gold { background: var(--gold); border-radius: 15px; padding: 5px; width: 110px; color: #3d2b1f; font-weight: bold; position: relative; z-index: 1; margin: 5px; }
-        .card-gold img { width: 100%; border-radius: 10px; background: white; border: 2px solid #3d2b1f; }
-        .points-box { background: rgba(0,0,0,0.1); border-radius: 5px; margin-top: 5px; font-size: 0.9rem; }
+        .card-gold { background: var(--gold); border-radius: 15px; padding: 10px; width: 110px; color: #1a1a1a; font-weight: bold; position: relative; z-index: 1; margin: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 2px solid white; }
+        .card-gold img { width: 100%; border-radius: 10px; background: white; border: 2px solid #1a1a1a; aspect-ratio: 1/1; object-fit: cover; }
+        .points-box { background: #1a1a1a; color: var(--gold); border-radius: 8px; margin-top: 8px; font-size: 1rem; padding: 4px 0; }
 
-        .main-card { background: rgba(0,0,0,0.9); padding: 15px; border-radius: 20px; border: 2px solid var(--s); width: 95%; max-width: 400px; gap: 10px; display: flex; flex-direction: column; }
-        .btn { border: none; padding: 12px; border-radius: 15px; font-weight: bold; width: 100%; cursor: pointer; }
+        .main-card { background: rgba(0,0,0,0.92); padding: 20px; border-radius: 25px; border: 2px solid var(--s); width: 95%; max-width: 400px; gap: 15px; display: flex; flex-direction: column; box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        .btn { border: none; padding: 16px; border-radius: 18px; font-weight: bold; width: 100%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1rem; }
+        .btn:active { transform: scale(0.92); }
         
-        /* Footer estilo imagen */
-        .footer-ref { background: #000; padding: 10px; font-size: 0.7rem; display: flex; justify-content: center; gap: 15px; border-top: 2px solid var(--gold); width: 100%; }
-        .footer-ref b { color: var(--gold); }
+        #video-container { width: 100%; border-radius: 20px; overflow: hidden; background: #000; display: none; border: 3px solid var(--gold); position: relative; }
+        #video { width: 100%; transform: scaleX(-1); }
+        
+        .avatar-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+        .avatar-opt { background: #222; padding: 8px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; }
+        .avatar-opt.selected { border-color: var(--gold); background: #333; }
+
+        .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-top: 10px; }
+        .color-opt { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid white; }
+        .color-opt.selected { border-color: var(--gold); transform: scale(1.2); }
+
+        .age-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+        .age-btn { background: #1a1a1a; border: 1px solid #333; color: white; padding: 12px; border-radius: 12px; cursor: pointer; }
+        .age-btn.selected { background: var(--p); border-color: var(--s); box-shadow: 0 0 10px var(--p); }
+
+        .footer-ref { background: #000; padding: 15px; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 10px; border-top: 2px solid var(--gold); width: 100%; margin-top: auto; color: #ccc; }
+        .donate-btn { color: var(--gold); text-decoration: none; background: rgba(255,215,0,0.15); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--gold); font-weight: bold; }
+        
+        .badge-reto { background: white; color: black; padding: 8px 20px; border-radius: 25px; font-size: 1rem; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; border: 2px solid var(--gold); }
+        .visual-mission { font-size: 7rem; margin: 15px 0; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
     </style>
 </head>
 <body>
 
 <div id="s1" class="screen active">
     <div class="main-card">
-        <h1 style="color:var(--gold); font-size: 1.5rem;">🏆 PODIO DE JAÉN</h1>
-        <div id="lista-previa" style="display:flex; justify-content:center; gap:5px;"></div>
-        <input type="text" id="in-nombre" placeholder="Nombre (Pe, Hache, Jota...)" style="padding:12px; border-radius:10px; width:100%; box-sizing:border-box; border:none;">
-        <div style="display:flex; gap:5px;">
-            <button class="btn" style="background:#444; color:white; flex:1" onclick="iniciarCamara()">📸 SELFIE</button>
-            <button class="btn" style="background:var(--p); color:white; flex:1" onclick="usarAvatar()">👤 AVATAR</button>
-        </div>
-        <button class="btn" id="btn-next" style="display:none; background:var(--gold); color:black" onclick="mostrar('s-retos')">SIGUIENTE 🚀</button>
-    </div>
-</div>
+        <h1 style="color:var(--gold); font-size: 1.5rem; margin:0;">🕵️ Espía Moli&Cía</h1>
+        <div id="lista-previa" style="display:flex; justify-content:center; gap:8px; flex-wrap: wrap; min-height: 40px;"></div>
 
-<div id="s-retos" class="screen">
-    <div class="main-card" style="background:white; color:#333">
-        <h3>🎯 Configura Retos</h3>
-        <div id="grid-retos" style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px"></div>
-        <button class="btn" style="background:var(--p); color:white; margin-top:15px" onclick="comenzarPartida()">EMPEZAR JUEGO</button>
+        <div id="step-flow">
+            <input type="text" id="in-nombre" placeholder="TU NOMBRE..." style="padding:15px; border-radius:12px; width:100%; box-sizing:border-box; border:none; background: #eee; font-weight: 900; text-align: center; color:#1a1a1a; font-size: 1.1rem; margin-bottom: 10px;">
+            
+            <p style="margin:5px 0; font-size:0.8rem; color:var(--gold)">EDAD:</p>
+            <div class="age-grid">
+                <button class="age-btn" onclick="setEdad(this, 'Peque')">- 6 años</button>
+                <button class="age-btn" onclick="setEdad(this, 'Cadete')">7 a 12 años</button>
+                <button class="age-btn" onclick="setEdad(this, 'Agente')">13 a 17 años</button>
+                <button class="age-btn" onclick="setEdad(this, 'Senior')">+ 18 años</button>
+            </div>
+
+            <div id="video-container" style="margin-top:10px;">
+                <video id="video" autoplay playsinline></video>
+                <button class="btn" style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%); width:auto; background:red; color:white;" onclick="capturarFoto()">📸 FOTO</button>
+            </div>
+
+            <div id="selector-modo" style="display:flex; gap:10px; margin-top:10px;">
+                <button class="btn" style="background:#444; color:white; flex:1" onclick="abrirCamara()">📸 CÁMARA</button>
+                <button class="btn" style="background:var(--p); color:white; flex:1" onclick="mostrarAvatares()">👤 AVATAR</button>
+            </div>
+
+            <div id="avatar-box" style="display:none; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px; margin-top: 10px;">
+                <p style="margin:0; font-size:0.7rem; color:var(--gold)">1. Elige Icono:</p>
+                <div class="avatar-grid" id="grid-iconos">
+                    <div class="avatar-opt" onclick="selIcono(this, '👮')">👮</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '👨‍🚒')">👨‍🚒</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🌈')">🌈</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🕵️')">🕵️</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🦸')">🦸</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🐱')">🐱</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🚀')">🚀</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '⚽')">⚽</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🎨')">🎨</div>
+                    <div class="avatar-opt" onclick="selIcono(this, '🥋')">🥋</div>
+                </div>
+                <p style="margin:10px 0 0 0; font-size:0.7rem; color:var(--gold)">2. Elige Color:</p>
+                <div class="color-grid">
+                    <div class="color-opt" style="background:#2196F3" onclick="selColor(this, '#2196F3')"></div>
+                    <div class="color-opt" style="background:#F44336" onclick="selColor(this, '#F44336')"></div>
+                    <div class="color-opt" style="background:#E91E63" onclick="selColor(this, '#E91E63')"></div>
+                    <div class="color-opt" style="background:#4CAF50" onclick="selColor(this, '#4CAF50')"></div>
+                    <div class="color-opt" style="background:#FF9800" onclick="selColor(this, '#FF9800')"></div>
+                    <div class="color-opt" style="background:#9C27B0" onclick="selColor(this, '#9C27B0')"></div>
+                </div>
+                <button class="btn" style="background:var(--gold); color:black; margin-top:10px; padding:8px;" onclick="confirmarAvatar()">LISTO ✅</button>
+            </div>
+        </div>
+
+        <button class="btn" id="btn-next" style="display:none; background:var(--gold); color:black; margin-top:10px;" onclick="comenzarPartida()">EMPEZAR MISIÓN 🚀</button>
     </div>
 </div>
 
 <div id="s-game" class="screen"></div>
 
 <div id="s-final" class="screen">
-    <h1 style="color:var(--gold)">🏆 PODIO DE JAÉN</h1>
-    <div class="podio-container">
+    <h1 style="color:var(--gold); font-size: 2.5rem; text-shadow: 3px 3px 0px var(--p); margin-bottom: 5px;">🏆 PODIO</h1>
+    <div class="podio-container" id="podio-capture">
         <div class="lagarto-bg">🦎</div>
         <div id="layout-final" style="display:flex; flex-wrap:wrap; justify-content:center; width:100%;"></div>
     </div>
-    <div style="display:flex; gap:10px; margin-top:20px; width:90%; max-width:400px;">
-        <button class="btn" style="background:#444; color:white; flex:1" onclick="location.reload()">REINICIAR</button>
-        <button class="btn" style="background:white; color:black; flex:1">✏️ COLOREAR</button>
+    
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:20px; width:95%; max-width:500px;">
+        <button class="btn" style="background:var(--s); color:black;" onclick="otraRonda()">🔄 OTRA PARTIDA</button>
+        <button class="btn" style="background:#25D366; color:white;" onclick="compartirWhatsApp()">🟢 WHATSAPP</button>
+        <button class="btn" style="background:#444; color:white; grid-column: span 2;" onclick="location.reload()">🏠 INICIO</button>
     </div>
 </div>
 
 <div class="footer-ref">
-    <span>Proyecto Ciudades de Andalucía</span>
-    <span>📬 <b>molinsan.jl@gmail.com</b></span>
-    <span>☕ <b>PayPal (7moli)</b></span>
+    <span>Proyecto Espía Moli&Cía</span>
+    <span>📬 <b>molingeniero3D@gmail.com</b></span>
+    <a href="https://www.paypal.me/7moli/1" target="_blank" class="donate-btn">☕ Donar 1€ para colaborar</a>
 </div>
 
 <script>
-    const niveles = { infantil: [{p:"SOL ☀️", s:"LUNA 🌙"}], junior:[{p:"PIZZA", s:"HAMBURGUESA"}], adolescente:[{p:"TIKTOK", s:"REELS"}], adulto:[{p:"ACEITE", s:"VINO"}] };
-    const poolRetos = [{i:"🤸",t:"Mímica"},{i:"🎨",t:"Dibujo"},{i:"🐶",t:"Sonido"},{i:"💃",t:"Baile"},{i:"🤖",t:"Robot"},{i:"🎤",t:"Canto"},{i:"🗣️",t:"Palabra"},{i:"🗿",t:"Estatua"},{i:"💨",t:"Aire"},{i:"🤫",t:"Susurro"}];
-    let jugadores=[], partida={};
+    const poolRetos = [
+        {i:"🤸",t:"Mímica", d:"Usa gestos y tu cuerpo sin hablar ni hacer ruidos."},
+        {i:"🎨",t:"Pintar", d:"Dibuja la palabra en el aire o en un papel."},
+        {i:"🎤",t:"Cantar", d:"Tararea o canta una canción relacionada con la palabra."},
+        {i:"🗣️",t:"Palabra", d:"Da pistas hablando (juego clásico de palabras)."}
+    ];
 
-    // Al cargar: Llenar retos
-    window.onload = () => {
-        const gr = document.getElementById('grid-retos');
-        poolRetos.forEach((r,i) => gr.innerHTML += `<div id="reto-${i}" style="background:#eee; padding:10px; border-radius:10px; cursor:pointer;" onclick="this.style.opacity=(this.style.opacity=='0.3'?'1':'0.3')"><b>${r.i}</b></div>`);
-    };
+    const poolPalabrasNinos = [
+        {t: "ACEITE", i: "🧴"}, {t: "LAGARTO", i: "🦎"}, {t: "HELADO", i: "🍦"}, {t: "GATO", i: "🐱"},
+        {t: "SOL", i: "☀️"}, {t: "PELOTA", i: "⚽"}, {t: "CATEDRAL", i: "⛪"}, {t: "CASTILLO", i: "🏰"},
+        {t: "AVIÓN", i: "✈️"}, {t: "BICI", i: "🚲"}, {t: "CANGREJO", i: "🦀"}, {t: "DORMIR", i: "😴"},
+        {t: "ELEFANTE", i: "🐘"}, {t: "FUEGO", i: "🔥"}, {t: "GUITARRA", i: "🎸"}, {t: "HUEVO", i: "🥚"},
+        {t: "ISLA", i: "🏝️"}, {t: "JIRAFA", i: "🦒"}, {t: "LUNA", i: "🌙"}, {t: "MANZANA", i: "🍎"},
+        {t: "NUBE", i: "☁️"}, {t: "PIZZA", i: "🍕"}, {t: "QUESO", i: "🧀"}, {t: "RATÓN", i: "🐭"},
+        {t: "SILLA", i: "🪑"}, {t: "TREN", i: "🚂"}, {t: "UVA", i: "🍇"}, {t: "VACA", i: "🐄"},
+        {t: "ZAPATO", i: "👟"}, {t: "ARAÑA", i: "🕷️"}, {t: "MÓVIL", i: "📱"}, {t: "RELOJ", i: "⌚"}
+    ];
 
-    function addJ(img) {
-        const nom = (document.getElementById('in-nombre').value || "Jugador").toUpperCase();
-        jugadores.push({nombre: nom, foto: img, puntos: 0, acc: nom.includes("PE")?"🌈":nom.includes("HACHE")?"👮":nom.includes("JOTA")?"👨‍🚒":""});
-        document.getElementById('lista-previa').innerHTML += `<img src="${img}" style="width:30px; border-radius:50%; border:1px solid var(--gold)">`;
+    const poolPalabrasAdultos = [
+        {t: "RESACA", i: "🤢"}, {t: "IMPUESTOS", i: "💸"}, {t: "AGUACATE", i: "🥑"}, {t: "HIPOTECA", i: "🏠"},
+        {t: "POLÍTICO", i: "👔"}, {t: "TELETRABAJO", i: "💻"}, {t: "SARCASMO", i: "😏"}, {t: "DIVORCIO", i: "💔"},
+        {t: "GIN TONIC", i: "🍸"}, {t: "DEPILACIÓN", i: "🪒"}, {t: "ESTRÉS", i: "🤯"}, {t: "YOGA", i: "🧘"},
+        {t: "CRIPTO", i: "🪙"}, {t: "INFLUENCER", i: "🤳"}, {t: "SUEGRA", i: "👵"}, {t: "DIETA", i: "🥗"}
+    ];
+
+    let jugadores=[], partida={}, currentEdad = "", streamMedia = null;
+    let tempIcono = "🕵️", tempColor = "#2196F3";
+
+    function setEdad(btn, edad) {
+        document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        currentEdad = edad;
+    }
+
+    async function abrirCamara() {
+        document.getElementById('selector-modo').style.display = 'none';
+        document.getElementById('avatar-box').style.display = 'none';
+        const container = document.getElementById('video-container');
+        container.style.display = 'block';
+        try {
+            streamMedia = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            document.getElementById('video').srcObject = streamMedia;
+        } catch (e) { alert("Cámara no disponible"); cerrarCamara(); }
+    }
+
+    function capturarFoto() {
+        const video = document.getElementById('video');
+        const canvas = document.createElement('canvas');
+        canvas.width = 400; canvas.height = 400;
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width, 0); ctx.scale(-1, 1);
+        const size = Math.min(video.videoWidth, video.videoHeight);
+        ctx.drawImage(video, (video.videoWidth-size)/2, (video.videoHeight-size)/2, size, size, 0, 0, 400, 400);
+        registrarJugador(canvas.toDataURL());
+        cerrarCamara();
+    }
+
+    function cerrarCamara() {
+        if(streamMedia) streamMedia.getTracks().forEach(track => track.stop());
+        document.getElementById('video-container').style.display = 'none';
+        document.getElementById('selector-modo').style.display = 'flex';
+    }
+
+    function mostrarAvatares() {
+        document.getElementById('video-container').style.display = 'none';
+        document.getElementById('avatar-box').style.display = 'block';
+    }
+
+    function selIcono(el, emoji) {
+        document.querySelectorAll('.avatar-opt').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+        tempIcono = emoji;
+    }
+
+    function selColor(el, color) {
+        document.querySelectorAll('.color-opt').forEach(opt => opt.classList.remove('selected'));
+        el.classList.add('selected');
+        tempColor = color;
+    }
+
+    function confirmarAvatar() {
+        const c = document.createElement('canvas'); c.width=400; c.height=400;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = tempColor; ctx.fillRect(0,0,400,400);
+        ctx.font = "200px serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillText(tempIcono, 200, 215);
+        registrarJugador(c.toDataURL());
+        document.getElementById('avatar-box').style.display = 'none';
+    }
+
+    function registrarJugador(img) {
+        const nom = document.getElementById('in-nombre').value.trim().toUpperCase();
+        if(!nom || !currentEdad) { alert("Escribe tu nombre y elige edad"); return; }
+        
+        let acc = tempIcono; 
+        if(nom.includes("PE")) acc = "🌈";
+        else if(nom.includes("HACHE")) acc = "👮";
+        else if(nom.includes("JOTA")) acc = "👨‍🚒";
+
+        jugadores.push({ nombre: nom, foto: img, puntos: 0, acc: acc, edad: currentEdad });
+        
+        const preview = document.getElementById('lista-previa');
+        const imgEl = document.createElement('img');
+        imgEl.src = img;
+        imgEl.style.cssText = "width:45px; height:45px; border-radius:50%; border:2px solid var(--gold); object-fit: cover;";
+        preview.appendChild(imgEl);
+        
         document.getElementById('in-nombre').value = "";
-        if(jugadores.length>=3) document.getElementById('btn-next').style.display="block";
+        if(jugadores.length >= 3) document.getElementById('btn-next').style.display="block";
     }
 
-    function usarAvatar() {
-        const c = document.createElement('canvas'); c.width=200; c.height=200;
-        const ctx = c.getContext('2d'); ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16); ctx.fillRect(0,0,200,200);
-        ctx.font = "100px serif"; ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText("🕵️", 100, 110);
-        addJ(c.toDataURL());
+    function mostrar(id){ 
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); 
+        document.getElementById(id).classList.add('active'); 
     }
 
-    function comenzarPartida() {
-        // Orden aleatorio de turnos
-        partida.orden = [...jugadores].sort(() => Math.random() - 0.5);
+    function comenzarPartida() { iniciarRonda(); }
+
+    function iniciarRonda() {
+        // Lógica de palabras basada en edad
+        const todosAdultos = jugadores.every(j => j.edad === 'Senior');
+        const pool = todosAdultos ? poolPalabrasAdultos : poolPalabrasNinos;
+        
+        partida.palabra = pool[Math.floor(Math.random()*pool.length)];
+        partida.ordenSecretos = [...jugadores].sort(() => Math.random() - 0.5);
+        partida.ordenAccion = [...jugadores].sort(() => Math.random() - 0.5);
         partida.espiaIdx = Math.floor(Math.random() * jugadores.length);
         partida.turnoActual = 0;
-        
-        // Asignar retos
-        const activos = poolRetos.filter((r,i) => document.getElementById(`reto-${i}`).style.opacity !== '0.3');
-        jugadores.forEach(j => j.reto = activos[Math.floor(Math.random()*activos.length)]);
-        
-        verTurno();
+        votosRecibidos = [];
+        jugadores.forEach(j => j.reto = poolRetos[Math.floor(Math.random()*poolRetos.length)]);
+        verTurnoSecreto();
     }
 
-    function verTurno() {
+    function otraRonda() { iniciarRonda(); }
+
+    function verTurnoSecreto() {
         mostrar('s-game');
-        const j = partida.orden[partida.turnoActual];
+        const j = partida.ordenSecretos[partida.turnoActual];
         document.getElementById('s-game').innerHTML = `
-            <div class="main-card" onclick="revelar()">
-                <img src="${j.foto}" style="width:100px; border-radius:50%; margin:auto; border:3px solid var(--gold)">
-                <h2>TURNO DE: ${j.nombre}</h2>
-                <p>PULSA PARA VER TU SECRETO</p>
+            <div class="main-card" onclick="revelarSecreto()">
+                <div style="position:relative; width:140px; height:140px; margin:auto;">
+                    <img src="${j.foto}" style="width:140px; height:140px; border-radius:50%; border:5px solid var(--gold); object-fit: cover;">
+                    <div style="position:absolute; top:0; right:0; font-size:2.5rem">${j.acc}</div>
+                </div>
+                <h2 style="color:white; margin:15px 0 0 0; font-size:1.8rem;">${j.nombre}</h2>
+                <p style="color:var(--gold); font-size:1.1rem; font-weight:bold;">Toca para ver tu secreto 🤫</p>
             </div>`;
     }
 
-    function revelar() {
-        const j = partida.orden[partida.turnoActual];
+    function revelarSecreto() {
+        const j = partida.ordenSecretos[partida.turnoActual];
         const esE = (j === jugadores[partida.espiaIdx]);
+        let mision = esE ? 
+            `<h1 style="color:#ff4444; font-size:2.5rem;">🕵️ ERES EL ESPÍA</h1><p>¡Disimula y averigua qué dicen!</p>` : 
+            `<h1 style="color:#4CAF50">🍀 PALABRA:</h1><div class="visual-mission">${partida.palabra.i}</div><h2 style="color:white">${partida.palabra.t}</h2>`;
+
         document.getElementById('s-game').innerHTML = `
-            <div class="main-card" style="border-color:${esE?'red':'green'}">
-                <h1>${esE ? 'ERES EL ESPÍA' : 'PALABRA: ACEITE'}</h1>
-                <p style="color:var(--gold)">RETO: ${j.reto.i} ${j.reto.t}</p>
-                <button class="btn" style="background:var(--p); color:white" onclick="siguienteTurno()">ENTENDIDO</button>
+            <div class="main-card" style="border-color:${esE?'#ff4444':'#4CAF50'}">
+                ${mision}
+                <div style="margin-top:20px; border-top:1px solid #333; padding-top:15px;">
+                    <p style="margin:0; font-size:0.9rem; color:#888;">DEBES ACTUAR ASÍ:</p>
+                    <div class="badge-reto" style="background:var(--gold)">
+                        ${j.reto.i} MODO: ${j.reto.t.toUpperCase()}
+                    </div>
+                </div>
+                <button class="btn" style="background:var(--p); color:white; margin-top:20px;" onclick="siguienteTurnoSecreto()">ENTENDIDO ✅</button>
             </div>`;
     }
 
-    function siguienteTurno() {
+    function siguienteTurnoSecreto() {
         partida.turnoActual++;
-        if(partida.turnoActual < jugadores.length) verTurno();
-        else pantallaRepaso();
+        if(partida.turnoActual < jugadores.length) verTurnoSecreto();
+        else { partida.turnoActual = 0; comenzarFaseAccion(); }
     }
 
-    function pantallaRepaso() {
-        let items = partida.orden.map(j => `<li><b>${j.nombre}:</b> ${j.reto.i}</li>`).join('');
+    function comenzarFaseAccion() {
+        mostrar('s-game');
+        const j = partida.ordenAccion[partida.turnoActual];
         document.getElementById('s-game').innerHTML = `
-            <div class="main-card">
-                <h3>📢 ¡A JUGAR!</h3>
-                <ul style="text-align:left">${items}</ul>
-                <button class="btn" style="background:var(--gold); color:black" onclick="pantallaVotacion(0)">EMPEZAR VOTACIÓN 🗳️</button>
+            <div class="main-card" style="border-color:var(--gold)">
+                <h2 style="color:var(--gold); margin:0">🎬 ¡TU TURNO!</h2>
+                <div style="position:relative; width:160px; height:160px; margin:15px auto;">
+                    <img src="${j.foto}" style="width:160px; height:160px; border-radius:25px; border:5px solid white; object-fit: cover;">
+                    <div style="position:absolute; bottom:-10px; right:-10px; font-size:3rem">${j.acc}</div>
+                </div>
+                <h1 style="margin:0; font-size:2rem;">${j.nombre}</h1>
+                <div class="badge-reto">
+                    <span>${j.reto.i}</span>
+                    <span>MODO: ${j.reto.t.toUpperCase()}</span>
+                </div>
+                <p style="background:rgba(255,255,255,0.1); padding:15px; border-radius:15px; font-size:0.9rem; border: 1px dashed var(--s); margin-top:15px;">
+                    ${j.reto.d}
+                </p>
+                <button class="btn" style="background:var(--p); color:white; margin-top:15px;" onclick="siguienteTurnoAccion()">SIGUIENTE AGENTE ➡️</button>
             </div>`;
+    }
+
+    function siguienteTurnoAccion() {
+        partida.turnoActual++;
+        if(partida.turnoActual < jugadores.length) comenzarFaseAccion();
+        else pantallaVotacion(0);
     }
 
     function pantallaVotacion(votaIdx) {
         if(votaIdx >= jugadores.length) return calcularResultado();
         const jVota = jugadores[votaIdx];
         const opciones = jugadores.filter(j => j !== jVota).map(j => 
-            `<button class="btn" style="background:#444; color:white; margin:2px" onclick="votar(${votaIdx}, '${j.nombre}')">${j.nombre}</button>`
+            `<button class="btn" style="background:#222; color:white; margin:6px 0; border:1px solid #444" onclick="votar(${votaIdx}, '${j.nombre}')">
+                <span style="font-size:1.5rem">${j.acc}</span> ${j.nombre}
+            </button>`
         ).join('');
-        
+        mostrar('s-game');
         document.getElementById('s-game').innerHTML = `
             <div class="main-card">
-                <h3>VOTA ${jVota.nombre}</h3>
-                <p>¿Quién crees que es el espía?</p>
-                ${opciones}
+                <h3>VOTA ${jVota.nombre} ${jVota.acc}</h3>
+                <p style="color:var(--gold)">¿Quién es el Espía?</p>
+                <div style="display:flex; flex-direction:column; overflow-y:auto;">${opciones}</div>
             </div>`;
     }
 
@@ -170,26 +355,34 @@
 
     function calcularResultado() {
         const espiaReal = jugadores[partida.espiaIdx];
+        let aciertos = 0;
         jugadores.forEach((j, i) => {
-            if(votosRecibidos[i] === espiaReal.nombre) j.puntos += 10;
+            if(votosRecibidos[i] === espiaReal.nombre) {
+                j.puntos += 10;
+                aciertos++;
+            }
         });
-        
+        if(aciertos === 0) espiaReal.puntos += 20;
+
         mostrar('s-final');
         const layout = document.getElementById('layout-final');
         layout.innerHTML = jugadores.map(j => `
             <div class="card-gold">
-                ${j.acc ? `<div style="position:absolute; top:-10px; right:0; font-size:1.5rem">${j.acc}</div>` : ''}
-                <img src="${j.foto}">
-                <div style="font-size:0.8rem">${j.nombre}</div>
+                <div style="position:relative">
+                    <img src="${j.foto}">
+                    <div style="position:absolute; top:-12px; right:-5px; font-size:2rem">${j.acc}</div>
+                </div>
+                <div style="font-size:0.8rem; margin-top:8px;">${j.nombre}</div>
                 <div class="points-box">${j.puntos} PTS</div>
             </div>
         `).join('');
-        
-        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
     }
 
-    function mostrar(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-    function iniciarCamara() { alert("Simulando cámara..."); usarAvatar(); }
+    function compartirWhatsApp() {
+        const texto = "¡Podio en Espía Moli&Cía! 🏆 " + jugadores.map(j => `${j.nombre}: ${j.puntos} pts`).join(" | ");
+        window.location.href = `whatsapp://send?text=${encodeURIComponent(texto)}`;
+    }
 </script>
 </body>
 </html>
